@@ -13,6 +13,16 @@ import random
 
 import os
 
+import PIL
+import Methods.AGCAM.ViT_for_AGCAM as ViT_Ours
+import torch.utils.model_zoo as model_zoo
+import torchvision.transforms as transforms
+import matplotlib.pyplot as plt
+import gc
+
+gc.collect()
+torch.cuda.empty_cache()
+
 # Try to import lovely_tensors
 try:
     import lovely_tensors as lt
@@ -20,6 +30,7 @@ try:
 except ModuleNotFoundError:
     # But not mandatory, pass if lovely tensor is not available
     pass
+
 
 
 # Define a function to seed everything
@@ -41,9 +52,18 @@ def main(cfg: DictConfig):
     seed_everything(cfg.seed)
 
     # Get model
-    print("Loading model:", cfg.model.name, end="\n\n")
-    model = instantiate(cfg.model.init).cuda()
-    model.eval()
+    # print("Loading model:", cfg.model.name, end="\n\n")
+    # model = instantiate(cfg.model.init).cuda()
+    # model.eval()
+
+    MODEL = 'vit_base_patch16_224'
+    class_num = 1000
+    state_dict = model_zoo.load_url('https://github.com/rwightman/pytorch-image-models/releases/download/v0.1-vitjx/jx_vit_base_p16_224-80ecf9dd.pth', progress=True, map_location='cuda')
+
+    # explainer = RISE(model, (224, 224))
+    model = ViT_Ours.create_model(MODEL, pretrained=True, num_classes=class_num).to('cuda')
+    model.load_state_dict(state_dict, strict=True)
+    model = model.eval()
 
     # Get method
     print("Initializing saliency method:", cfg.method.name, end="\n\n")
@@ -68,6 +88,8 @@ def main(cfg: DictConfig):
 
         # Add the current map to the list of saliency maps
         saliency_maps_list.append(cur_map)
+
+        break
 
     # Stack into a single tensor
     saliency_maps = torch.stack(saliency_maps_list)

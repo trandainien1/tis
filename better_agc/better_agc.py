@@ -130,9 +130,10 @@ class BetterAGC:
         # Normalize the heatmap from 0 to 1
         mask = (mask-mask.min())/(mask.max()-mask.min())
 
-        mask = mask.detach().cpu().numpy()[0]
+        # mask = mask.detach().cpu().numpy()[0]
+        mask = mask[0][0]
 
-        mask = np.transpose(mask, (1, 2, 0))
+        # mask = np.transpose(mask, (1, 2, 0))
 
         return mask
 
