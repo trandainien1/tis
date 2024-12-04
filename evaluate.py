@@ -58,7 +58,7 @@ def main(cfg: DictConfig):
         saliency_maps = torch.tensor(np.load(cfg.input_npz)['arr_0'])
 
         # Get metric
-        metric = instantiate(cfg.metric.init, model)
+        metric = instantiate(cfg.metric.init, modela)
 
         # Set resize transformation for the saliency maps if upsampling is required
         upsampling_fn = Resize(dataset[0][0].shape[-2:])

@@ -1,0 +1,3 @@
+name: better_agc
+init:
+  _target_: better_agc.BetterAGC
