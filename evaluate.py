@@ -17,6 +17,16 @@ import pandas as pd
 
 import os
 
+import PIL
+import Methods.AGCAM.ViT_for_AGCAM as ViT_Ours
+import torch.utils.model_zoo as model_zoo
+import torchvision.transforms as transforms
+import matplotlib.pyplot as plt
+import gc
+
+gc.collect()
+torch.cuda.empty_cache()
+
 # Try to import lovely_tensors
 try:
     import lovely_tensors as lt
@@ -64,7 +74,7 @@ def main(cfg: DictConfig):
         saliency_maps = torch.tensor(np.load(cfg.input_npz)['arr_0'])
 
         # Get metric
-        metric = instantiate(cfg.metric.init, modela)
+        metric = instantiate(cfg.metric.init, model)
 
         # Set resize transformation for the saliency maps if upsampling is required
         upsampling_fn = Resize(dataset[0][0].shape[-2:])
@@ -89,13 +99,15 @@ def main(cfg: DictConfig):
     else:
         end_idx = cfg.end_idx
 
+    heatmaps = []
+    init_image = None
     # Loop over the dataset to generate the saliency maps
     for idx in tqdm(range(start_idx, end_idx+1),
                     desc="Computing metric",
                     total=(end_idx - start_idx)):
         (image, target) = dataset[idx]
         image = image.unsqueeze(0).cuda()
-
+        init_image = image
         if cfg.no_target:
             target = torch.argmax(model(image)).item()
 
@@ -105,7 +117,7 @@ def main(cfg: DictConfig):
             if saliency_map.shape != image.shape:
                 saliency_map = upsampling_fn(saliency_map)
 
-            score = metric(image, saliency_map, target=target)
+            score, heatmaps = metric(image, saliency_map, target=target)
 
         else:
             score = metric(image, target=target)
@@ -113,6 +125,9 @@ def main(cfg: DictConfig):
         metric_scores.append(score)
 
     metric_scores = torch.stack(metric_scores).cpu().numpy()
+    # init_image = init_image.unsqueeze(0)
+    heatmaps = torch.cat((init_image, heatmaps), dim=0)
+    print(heatmaps.shape)
 
     # Save as a csv
     csv_name = os.path.split(cfg.input_npz)[1].split(".npz")[0] + "_" + cfg.metric.name
@@ -127,9 +142,12 @@ def main(cfg: DictConfig):
         print("WARNING: csv file already exists:", csv_path)
         csv_path += ".new"
 
-    print("\nSaving saliency maps to file:", csv_path)
+    print("\nSaving scores to file:", csv_path)
     pd.DataFrame(metric_scores).to_csv(csv_path, header=False, index=False)
 
+    output_npz = f'npz/ViT_better_agc.npz'
+    print("\nSaving saliency maps to file: ", output_npz)
+    np.savez(output_npz, heatmaps.cpu().numpy())
 
 if __name__ == "__main__":
     main()

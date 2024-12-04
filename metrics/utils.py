@@ -109,7 +109,7 @@ class RelevanceMetric:
             scores[selection_slice] = res[:, target].detach()
 
         # Return auc with detailed scores
-        return scores
+        return scores, samples
 
     def generate_samples(self, *args, **kwargs):
         """
