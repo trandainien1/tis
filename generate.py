@@ -173,8 +173,8 @@ def main(cfg: DictConfig):
 
     # Get method
     print("Initializing saliency method:", cfg.method.name, end="\n\n")
-    # method = instantiate(cfg.method.init, model)
-    method = AGCAM(model)
+    method = instantiate(cfg.method.init, model)
+    # method = AGCAM(model)
 
     # Get dataset
     print("Loading dataset", end="\n\n")

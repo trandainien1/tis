@@ -103,6 +103,7 @@ def main(cfg: DictConfig):
     heatmaps = []
     init_image = None
     # Loop over the dataset to generate the saliency maps
+
     for idx in tqdm(range(start_idx, end_idx+1),
                     desc="Computing metric",
                     total=(end_idx - start_idx)):
@@ -113,7 +114,7 @@ def main(cfg: DictConfig):
             target = torch.argmax(model(image)).item()
 
         if cfg.metric.npz_only:
-            saliency_map = saliency_maps[idx]
+            saliency_map = saliency_maps[idx-1000]
             saliency_map = saliency_map.reshape((1, 1, *saliency_map.shape))
             if saliency_map.shape != image.shape:
                 saliency_map = upsampling_fn(saliency_map)
