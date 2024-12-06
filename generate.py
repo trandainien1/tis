@@ -159,7 +159,7 @@ def main(cfg: DictConfig):
 
     # Get model
     print("Loading model:", cfg.model.name, end="\n\n")
-    if cfg.model.name == 'agc' or cfg.model.name == 'better_agc':
+    if cfg.method.name == 'agc' or cfg.method.name == 'better_agc':
         MODEL = 'vit_base_patch16_224'
         class_num = 1000
         state_dict = model_zoo.load_url('https://github.com/rwightman/pytorch-image-models/releases/download/v0.1-vitjx/jx_vit_base_p16_224-80ecf9dd.pth', progress=True, map_location='cuda')
