@@ -189,7 +189,7 @@ def main(cfg: DictConfig):
         count += 1
         if count < 1000:
             continue
-        if count > 4000:
+        if count >= 2000:
             break
 
         image = image.unsqueeze(0).cuda()
