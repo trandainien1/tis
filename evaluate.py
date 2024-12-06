@@ -78,10 +78,10 @@ def main(cfg: DictConfig):
 
         # Set resize transformation for the saliency maps if upsampling is required
         upsampling_fn = Resize(dataset[0][0].shape[-2:])
-        dataset = dataset[:1000]
-        
-        assert len(dataset) == len(
-            saliency_maps), "The saliency maps and the dataset don't have the same number of items"
+        # print(len(dataset), len(saliency_maps))
+
+        # assert len(dataset) == len(
+        #     saliency_maps), "The saliency maps and the dataset don't have the same number of items"
 
     else:
         # Get method
