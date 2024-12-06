@@ -95,17 +95,17 @@ class BetterAGC:
             max_vals = tensor_heatmaps.amax(dim=(2, 3), keepdim=True)  # Max across width and height
             # Normalize using min-max scaling
             tensor_heatmaps = (tensor_heatmaps - min_vals) / (max_vals - min_vals + 1e-7)  # Add small value to avoid division by zero
-            print("before multiply img with mask: ")
-            print(torch.cuda.memory_allocated()/1024**2)
+            # print("before multiply img with mask: ")
+            # print(torch.cuda.memory_allocated()/1024**2)
             m = torch.mul(tensor_heatmaps, image)
-            print("After multiply img with mask scores: ")
-            print(torch.cuda.memory_allocated()/1024**2)
+            # print("After multiply img with mask scores: ")
+            # print(torch.cuda.memory_allocated()/1024**2)
 
             with torch.no_grad():
                 output_mask = self.model(m)
             
-            print("After get output from model: ")
-            print(torch.cuda.memory_allocated()/1024**2)
+            # print("After get output from model: ")
+            # print(torch.cuda.memory_allocated()/1024**2)
     
             agc_scores = output_mask[:, prediction.item()] - output_truth[0, prediction.item()]
             agc_scores = torch.sigmoid(agc_scores)
@@ -114,8 +114,8 @@ class BetterAGC:
 
             del output_mask  # Delete unnecessary variables that are no longer needed
             torch.cuda.empty_cache()  # Clean up cache if necessary
-            print("After deleted output from model: ")
-            print(torch.cuda.memory_allocated()/1024**2)
+            # print("After deleted output from model: ")
+            # print(torch.cuda.memory_allocated()/1024**2)
             
             return agc_scores
 
@@ -149,9 +149,9 @@ class BetterAGC:
         with torch.enable_grad():
             predicted_class, head_cams, output_truth = self.generate_cams_of_heads(x)
 
-        print("After generate cams: ")
-        print(torch.cuda.memory_allocated()/1024**2)
-        print()
+        # print("After generate cams: ")
+        # print(torch.cuda.memory_allocated()/1024**2)
+        # print()
         
         # Define the class to explain. If not explicit, use the class predicted by the model
         if class_idx is None:
@@ -164,13 +164,13 @@ class BetterAGC:
             head_cams=head_cams,
             prediction=predicted_class, output_truth=output_truth
         )
-        print("After generate scores: ")
-        print(torch.cuda.memory_allocated()/1024**2)
-        print()
+        # print("After generate scores: ")
+        # print(torch.cuda.memory_allocated()/1024**2)
+        # print()
         
         saliency_map = self.generate_saliency(head_cams=head_cams, agc_scores=scores)
-        print("After generate saliency maps: ")
-        print(torch.cuda.memory_allocated()/1024**2)
-        print()
+        # print("After generate saliency maps: ")
+        # print(torch.cuda.memory_allocated()/1024**2)
+        # print()
 
         return saliency_map
