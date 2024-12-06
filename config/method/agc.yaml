@@ -1,0 +1,3 @@
+name: agc
+init:
+  _target_: agc.AGCAM

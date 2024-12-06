@@ -1,2 +1,2 @@
-from .agc import AGC
+from .agc import AGCAM
 
