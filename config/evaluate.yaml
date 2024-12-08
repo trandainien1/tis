@@ -14,4 +14,4 @@ input_npz: npz/${model.name}_${method.name}.npz
 output_csv_dir: csv/
 metric_batch_size: 8
 start_idx: 4000
-end_idx: 5000
+end_idx: 4999
