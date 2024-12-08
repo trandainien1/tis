@@ -187,8 +187,10 @@ def main(cfg: DictConfig):
     saliency_maps_list = []
 
     count = 0
+    first_img = None # Nien
     # Loop over the dataset to generate the saliency maps
     for image, class_idx in tqdm(dataset, desc="Computing saliency maps"):
+        first_img = image # Nien
         count += 1
         if count < 0:
             continue
@@ -206,7 +208,7 @@ def main(cfg: DictConfig):
         # Add the current map to the list of saliency maps
         saliency_maps_list.append(cur_map)
 
-        
+    saliency_maps_list.insert(0, first_img) # Nien
 
     # Stack into a single tensor
     saliency_maps = torch.stack(saliency_maps_list)
