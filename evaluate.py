@@ -114,7 +114,7 @@ def main(cfg: DictConfig):
             target = torch.argmax(model(image)).item()
 
         if cfg.metric.npz_only:
-            saliency_map = saliency_maps[idx-2000]
+            saliency_map = saliency_maps[idx]
             saliency_map = saliency_map.reshape((1, 1, *saliency_map.shape))
             if saliency_map.shape != image.shape:
                 saliency_map = upsampling_fn(saliency_map)
