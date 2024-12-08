@@ -190,9 +190,9 @@ def main(cfg: DictConfig):
     # Loop over the dataset to generate the saliency maps
     for image, class_idx in tqdm(dataset, desc="Computing saliency maps"):
         count += 1
-        if count < 0:
+        if count < 3000:
             continue
-        if count >= 2:
+        if count >= 3999:
             break
 
         image = image.unsqueeze(0).cuda()
