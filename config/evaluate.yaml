@@ -1,7 +1,7 @@
 defaults:
   - metric: insertion
   - model: vit
-  - method: better_agc
+  - method: agc
   - dataset: ilsvrc2012_subset
   - transform: ilsvrc2012_albumentations
   - optional method_model: ${method}_${model}
@@ -13,5 +13,5 @@ no_target: false
 input_npz: npz/${model.name}_${method.name}.npz
 output_csv_dir: csv/
 metric_batch_size: 8
-start_idx: 3000
-end_idx: 3999
+start_idx: 4000
+end_idx: 5000
