@@ -133,7 +133,7 @@ def main(cfg: DictConfig):
 
     metric_scores = torch.stack(metric_scores).cpu().numpy()
     # init_image = init_image.unsqueeze(0)
-    heatmaps = torch.cat((init_image, torch.tensor(init_target, dtype=torch.int8), heatmaps), dim=0)
+    heatmaps = torch.cat((init_image, torch.tensor(init_target, dtype=torch.int8, device='cuda'), heatmaps), dim=0)
     print(heatmaps.shape)
 
     # Save as a csv
