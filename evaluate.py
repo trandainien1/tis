@@ -71,7 +71,7 @@ def main(cfg: DictConfig):
         input_npz = cfg.input_npz
 
         print("Loading saliency maps from", cfg.input_npz, end="\n\n")
-        saliency_maps = torch.tensor(np.load(cfg.input_npz)['arr_0'])[1:]
+        saliency_maps = torch.tensor(np.load(cfg.input_npz)['arr_0'])
 
         # Get metric
         metric = instantiate(cfg.metric.init, model)
@@ -114,7 +114,7 @@ def main(cfg: DictConfig):
             target = torch.argmax(model(image)).item()
 
         if cfg.metric.npz_only:
-            saliency_map = saliency_maps[idx] # !Nien: subtract number of images here
+            saliency_map = saliency_maps[idx-2500] # !Nien: subtract number of images here
             saliency_map = saliency_map.reshape((1, 1, *saliency_map.shape))
             if saliency_map.shape != image.shape:
                 saliency_map = upsampling_fn(saliency_map)
