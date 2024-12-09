@@ -113,7 +113,7 @@ def main(cfg: DictConfig):
         if cfg.no_target:
             target = torch.argmax(model(image)).item()
 
-        # Nien: store target
+        # ------------- Nien: store target --------
         import json
 
         # Save the list to a file in JSON format
@@ -121,7 +121,7 @@ def main(cfg: DictConfig):
             json.dump(target, file)
 
         print("Numbers saved in JSON format.")
-
+        # -----------------------------------------
 
         if cfg.metric.npz_only:
             saliency_map = saliency_maps[idx-2500] # !Nien: subtract number of images here
