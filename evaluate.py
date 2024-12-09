@@ -114,17 +114,17 @@ def main(cfg: DictConfig):
             target = torch.argmax(model(image)).item()
 
         # ------------- Nien: store target --------
-        import json
+        # import json
 
-        # Save the list to a file in JSON format
-        with open("target.json", "w") as file:
-            json.dump(target, file)
+        # # Save the list to a file in JSON format
+        # with open("target.json", "w") as file:
+        #     json.dump(target, file)
 
-        print("Numbers saved in JSON format.")
+        # print("Numbers saved in JSON format.")
         # -----------------------------------------
 
         if cfg.metric.npz_only:
-            saliency_map = saliency_maps[idx-2500] # !Nien: subtract number of images here
+            saliency_map = saliency_maps[idx] # !Nien: subtract number of images here
             saliency_map = saliency_map.reshape((1, 1, *saliency_map.shape))
             if saliency_map.shape != image.shape:
                 saliency_map = upsampling_fn(saliency_map)

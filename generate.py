@@ -190,10 +190,10 @@ def main(cfg: DictConfig):
     # Loop over the dataset to generate the saliency maps
     for image, class_idx in tqdm(dataset, desc="Computing saliency maps"):
         count += 1
-        if count < 4000:
-            continue
-        # if count >= 4000:
-            # break
+        # if count < 4000:
+        #     continue
+        if count >= 1000:
+            break
 
         image = image.unsqueeze(0).cuda()
 
@@ -206,7 +206,6 @@ def main(cfg: DictConfig):
         # Add the current map to the list of saliency maps
         saliency_maps_list.append(cur_map)
 
-        
 
     # Stack into a single tensor
     saliency_maps = torch.stack(saliency_maps_list)
@@ -218,7 +217,6 @@ def main(cfg: DictConfig):
     print("\nSaving saliency maps to file:", cfg.output_npz)
     create_directory_if_not_exists(output_npz)
     np.savez(cfg.output_npz, saliency_maps.cpu().numpy())
-
 
 if __name__ == "__main__":
     main()
