@@ -157,7 +157,7 @@ def main(cfg: DictConfig):
     print("\nSaving scores to file:", csv_path)
     pd.DataFrame(metric_scores).to_csv(csv_path, header=False, index=False)
 
-    output_npz = f'npz/{cfg.model.name}_{cfg.method.name}.npz'
+    output_npz = f'npz/{cfg.model.name}_{cfg.method.name}_masks.npz'
     print("\nSaving saliency maps to file: ", output_npz)
     np.savez(output_npz, heatmaps.cpu().numpy())
 
