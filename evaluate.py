@@ -102,6 +102,7 @@ def main(cfg: DictConfig):
 
     heatmaps = []
     init_image = None
+    init_target = None
     # Loop over the dataset to generate the saliency maps
 
     for idx in tqdm(range(start_idx, end_idx+1),
@@ -109,7 +110,10 @@ def main(cfg: DictConfig):
                     total=(end_idx - start_idx)):
         (image, target) = dataset[idx]
         image = image.unsqueeze(0).cuda()
+        
         init_image = image
+        init_target = target
+
         if cfg.no_target:
             target = torch.argmax(model(image)).item()
 
@@ -126,9 +130,10 @@ def main(cfg: DictConfig):
 
         metric_scores.append(score)
 
+
     metric_scores = torch.stack(metric_scores).cpu().numpy()
     # init_image = init_image.unsqueeze(0)
-    heatmaps = torch.cat((init_image, heatmaps), dim=0)
+    heatmaps = torch.cat((init_image, init_target, heatmaps), dim=0)
     print(heatmaps.shape)
 
     # Save as a csv
