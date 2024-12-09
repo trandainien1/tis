@@ -71,7 +71,7 @@ def main(cfg: DictConfig):
         input_npz = cfg.input_npz
 
         print("Loading saliency maps from", cfg.input_npz, end="\n\n")
-        saliency_maps = torch.tensor(np.load(cfg.input_npz)['arr_0'])
+        saliency_maps = torch.tensor(np.load(cfg.input_npz)['arr_0'])[1:]
 
         # Get metric
         metric = instantiate(cfg.metric.init, model)
