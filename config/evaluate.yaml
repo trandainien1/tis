@@ -1,7 +1,7 @@
 defaults:
   - metric: pointing_game
   - model: vit
-  - method: better_agc
+  - method: tis
   - dataset: ilsvrc2012_subset
   - transform: ilsvrc2012_albumentations
   - optional method_model: ${method}_${model}
@@ -14,4 +14,4 @@ input_npz: npz/${model.name}_${method.name}_heatmap.npz
 output_csv_dir: csv/
 metric_batch_size: 8
 start_idx: 0
-end_idx: 999
+end_idx: 0
