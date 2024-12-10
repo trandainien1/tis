@@ -2,10 +2,10 @@ defaults:
   - metric: pointing_game
   - model: vit
   - method: tis
-  - dataset: ilsvrc2012_bboxes_subset
+  - dataset: ilsvrc2012_subset
   - transform: ilsvrc2012_albumentations
-  # - optional method_model: ${method}_${model}
-  # - optional metric_dataset: ${metric}_${dataset}
+  - optional method_model: ${method}_${model}
+  - optional metric_dataset: ${metric}_${dataset}
   - _self_  
 
 seed: 12345
