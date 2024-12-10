@@ -1,9 +1,9 @@
 # @package _global_
 
-# dataset:
-#   dataset:
-#     _target_: datasets.BboxesImageNet
-
-name:
-init:
+dataset:
+  metric_dataset:
     _target_: datasets.BboxesImageNet
+
+# name: hello
+# init:
+    # _target_: datasets.BboxesImageNet
