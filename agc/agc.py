@@ -1,5 +1,6 @@
 import torch
 from einops.layers.torch import Reduce, Rearrange
+import Methods.AGCAM.ViT_for_AGCAM as ViT_Ours
 
 class AGCAM:
     """ Implementation of our method."""
@@ -12,6 +13,7 @@ class AGCAM:
             head_fusion (str): type of head-wise aggregation (default: 'sum')
             layer_fusion (str): type of layer-wise aggregation (default: 'sum')
         """
+        print('Init AGC')
         self.model = model
         self.head = None
         self.width = None
@@ -30,7 +32,6 @@ class AGCAM:
         # As stated in Methodology part, in ViT with [class] token, only the first row of the attention matrix is directly connected with the MLP head.
         self.attn_matrix.append(output[:, :, 0:1, :]) # shape: [batch, num_heads, 1, num_patches] 
         
-
 
     def get_grad_attn(self, module, grad_input, grad_output):
         # As stated in Methodology part, in ViT with [class] token, only the first row of the attention matrix is directly connected with the MLP head.
@@ -51,8 +52,6 @@ class AGCAM:
         else:                                           # generate CAM for the predicted class
             loss = output[0, cls_idx]
         loss.backward()
-
-        print('attn_matrix shape: ', self.attn_matrix.shape)
 
         b, h, n, d = self.attn_matrix[0].shape
         self.head=h
