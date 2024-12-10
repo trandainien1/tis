@@ -1,5 +1,9 @@
 # @package _global_
 
-dataset:
-  dataset:
+# dataset:
+#   dataset:
+#     _target_: datasets.BboxesImageNet
+
+name:
+init:
     _target_: datasets.BboxesImageNet
