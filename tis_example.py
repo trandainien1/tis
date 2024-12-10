@@ -77,7 +77,7 @@ def main(cfg: DictConfig):
     # Computing saliency map
     print("Computing saliency map using", cfg.method.name, "for class", classes[class_idx])
     saliency_map = method(image, class_idx=class_idx).detach().cpu()
-
+    print('shape of saliency map of tis: ', saliency_map.shape)
     image = image - image.min()
     image = image/image.max()
     overlay(image.squeeze(0).cpu(), saliency_map, output_file=cfg.output_file)
