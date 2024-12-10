@@ -13,7 +13,7 @@ class AGCAM:
             head_fusion (str): type of head-wise aggregation (default: 'sum')
             layer_fusion (str): type of layer-wise aggregation (default: 'sum')
         """
-        print('Init AGC')
+
         self.model = model
         self.head = None
         self.width = None
