@@ -77,16 +77,16 @@ class AGCAM:
         mask = Reduce('b l z p -> b z p', reduction=self.layer_fusion)(mask)
         mask = Rearrange('b z (h w) -> b z h w', h=self.width, w=self.width)(mask)
         
-        mask = mask.unsqueeze(0)[0]
-        # Reshape the mask to have the same size with the original input image (224 x 224)
-        upsample = torch.nn.Upsample(224, mode = 'bilinear', align_corners=False)
-        mask = upsample(mask)
+        # mask = mask.unsqueeze(0)[0]
+        # # Reshape the mask to have the same size with the original input image (224 x 224)
+        # upsample = torch.nn.Upsample(224, mode = 'bilinear', align_corners=False)
+        # mask = upsample(mask)
 
-        # Normalize the heatmap from 0 to 1
-        mask = (mask-mask.min())/(mask.max()-mask.min())
+        # # Normalize the heatmap from 0 to 1
+        # mask = (mask-mask.min())/(mask.max()-mask.min())
 
-        # mask = mask.detach().cpu().numpy()[0]
-        mask = mask[0][0]
+        # # mask = mask.detach().cpu().numpy()[0]
+        # mask = mask[0][0]
 
         return prediction, mask
 
