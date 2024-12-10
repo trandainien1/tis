@@ -88,6 +88,8 @@ class AGCAM:
         # # mask = mask.detach().cpu().numpy()[0]
         # mask = mask[0][0]
 
+        mask = mask.squeeze()
+
         return prediction, mask
 
     def __call__(self, x, class_idx=None):
