@@ -1,7 +1,7 @@
 defaults:
   - metric: insertion
   - model: vit
-  - method: better_agc
+  - method: tis
   - dataset: ilsvrc2012_subset
   - transform: ilsvrc2012_albumentations
   - optional method_model: ${method}_${model}
