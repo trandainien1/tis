@@ -20,6 +20,7 @@ import torchvision.transforms as transforms
 import matplotlib.pyplot as plt
 import gc
 
+
 gc.collect()
 torch.cuda.empty_cache()
 
@@ -46,7 +47,6 @@ def create_directory_if_not_exists(filepath):
         os.makedirs(directory)
 
 
-import torch
 from einops.layers.torch import Reduce, Rearrange
 
 class AGCAM:
@@ -150,6 +150,7 @@ class AGCAM:
         
         return ours_heatmap
 
+DEVICE = 'cuda'
 
 # Use Hydra to allow easy configuration swap for comparison of methods
 @hydra.main(version_base="1.3", config_path="config", config_name="generate")
@@ -162,10 +163,10 @@ def main(cfg: DictConfig):
     if cfg.method.name == 'agc' or cfg.method.name == 'better_agc':
         MODEL = 'vit_base_patch16_224'
         class_num = 1000
-        state_dict = model_zoo.load_url('https://github.com/rwightman/pytorch-image-models/releases/download/v0.1-vitjx/jx_vit_base_p16_224-80ecf9dd.pth', progress=True, map_location='cuda')
+        state_dict = model_zoo.load_url('https://github.com/rwightman/pytorch-image-models/releases/download/v0.1-vitjx/jx_vit_base_p16_224-80ecf9dd.pth', progress=True, map_location=DEVICE)
 
         # explainer = RISE(model, (224, 224))
-        model = ViT_Ours.create_model(MODEL, pretrained=True, num_classes=class_num).to('cuda')
+        model = ViT_Ours.create_model(MODEL, pretrained=True, num_classes=class_num).to(DEVICE)
         model.load_state_dict(state_dict, strict=True)
         model = model.eval()
     else:
