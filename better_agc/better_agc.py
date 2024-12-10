@@ -132,6 +132,7 @@ class BetterAGC:
         # mask = (mask-mask.min())/(mask.max()-mask.min())
         # mask = mask[0][0]
 
+        mask = mask.squeeze()
         return mask
 
     def __call__(self, x, class_idx=None):
