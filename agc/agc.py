@@ -52,6 +52,8 @@ class AGCAM:
             loss = output[0, cls_idx]
         loss.backward()
 
+        print('attn_matrix shape: ', self.attn_matrix.shape)
+
         b, h, n, d = self.attn_matrix[0].shape
         self.head=h
         self.width = int((d-1)**0.5)
