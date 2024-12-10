@@ -91,8 +91,21 @@ def main(cfg: DictConfig):
     print("Computing saliency map using", cfg.method.name, "for class", classes[class_idx])
     if cfg.method.name == 'better_agc':
         saliency_map, scores = method(image, class_idx=class_idx).detach().cpu()
+
+        import json
+        # Convert tensor to list
+        scores_list = scores.tolist()
+
+        # Save to a JSON file
+        with open("scores.json", "w") as json_file:
+            json.dump(scores_list, json_file)
+
+        print("Scores saved to scores.json")
+
     else:
         saliency_map = method(image, class_idx=class_idx).detach().cpu()
+
+
 
     print(f'shape of saliency map of {cfg.method.name}: ', saliency_map.shape)
     image = image - image.min()
