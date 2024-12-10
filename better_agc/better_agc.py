@@ -120,20 +120,17 @@ class BetterAGC:
             return agc_scores
 
     def generate_saliency(self, head_cams, agc_scores):
-        my_cam = (agc_scores.view(12, 12, 1, 1, 1) * head_cams[0]).sum(axis=(0, 1))
-        mask = my_cam
-        mask = mask.unsqueeze(0)
-        # Reshape the mask to have the same size with the original input image (224 x 224)
-        upsample = torch.nn.Upsample(224, mode = 'bilinear', align_corners=False)
-        mask = upsample(mask)
+        mask = (agc_scores.view(12, 12, 1, 1, 1) * head_cams[0]).sum(axis=(0, 1))
+        # mask = my_cam
+        # mask = mask.unsqueeze(0)
+        
+        # # Reshape the mask to have the same size with the original input image (224 x 224)
+        # upsample = torch.nn.Upsample(224, mode = 'bilinear', align_corners=False)
+        # mask = upsample(mask)
 
-        # Normalize the heatmap from 0 to 1
-        mask = (mask-mask.min())/(mask.max()-mask.min())
-
-        # mask = mask.detach().cpu().numpy()[0]
-        mask = mask[0][0]
-
-        # mask = np.transpose(mask, (1, 2, 0))
+        # # Normalize the heatmap from 0 to 1
+        # mask = (mask-mask.min())/(mask.max()-mask.min())
+        # mask = mask[0][0]
 
         return mask
 
