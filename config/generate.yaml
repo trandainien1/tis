@@ -1,6 +1,6 @@
 defaults:
   - model: vit
-  - method: agc
+  - method: better_agc
   - dataset: ilsvrc2012_subset
   - transform: ilsvrc2012_albumentations
   - optional method_model: ${method}_${model}
