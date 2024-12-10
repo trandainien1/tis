@@ -1,9 +1,9 @@
 # @package _global_
 
-dataset:
+metric_dataset:
   # dataset:
   _target_: datasets.BboxesImageNet
-  root: "./inputs/imagenet/"
+  # root: "./inputs/imagenet/"
 
 # name: hello
 # init:
