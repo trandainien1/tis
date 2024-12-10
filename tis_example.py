@@ -89,7 +89,11 @@ def main(cfg: DictConfig):
 
     # Computing saliency map
     print("Computing saliency map using", cfg.method.name, "for class", classes[class_idx])
-    saliency_map = method(image, class_idx=class_idx).detach().cpu()
+    if cfg.method.name == 'better_agc':
+        saliency_map, scores = method(image, class_idx=class_idx).detach().cpu()
+    else:
+        saliency_map = method(image, class_idx=class_idx).detach().cpu()
+
     print(f'shape of saliency map of {cfg.method.name}: ', saliency_map.shape)
     image = image - image.min()
     image = image/image.max()

@@ -121,16 +121,6 @@ class BetterAGC:
 
     def generate_saliency(self, head_cams, agc_scores):
         mask = (agc_scores.view(12, 12, 1, 1, 1) * head_cams[0]).sum(axis=(0, 1))
-        # mask = my_cam
-        # mask = mask.unsqueeze(0)
-        
-        # # Reshape the mask to have the same size with the original input image (224 x 224)
-        # upsample = torch.nn.Upsample(224, mode = 'bilinear', align_corners=False)
-        # mask = upsample(mask)
-
-        # # Normalize the heatmap from 0 to 1
-        # mask = (mask-mask.min())/(mask.max()-mask.min())
-        # mask = mask[0][0]
 
         mask = mask.squeeze()
         return mask
@@ -171,4 +161,4 @@ class BetterAGC:
         # print(torch.cuda.memory_allocated()/1024**2)
         # print()
 
-        return saliency_map
+        return saliency_map, scores
