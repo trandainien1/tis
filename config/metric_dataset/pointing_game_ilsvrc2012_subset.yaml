@@ -3,8 +3,4 @@
 dataset:
   dataset:
     _target_: datasets.BboxesImageNet
-  # root: "./inputs/imagenet/"
-
-# name: hello
-# init:
-    # _target_: datasets.BboxesImageNet
+    

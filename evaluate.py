@@ -129,7 +129,8 @@ def main(cfg: DictConfig):
             if saliency_map.shape != image.shape:
                 saliency_map = upsampling_fn(saliency_map)
 
-            score, heatmaps = metric(image, saliency_map, target=target)
+            # score, heatmaps = metric(image, saliency_map, target=target)
+            score = metric(image, saliency_map, target=target)
 
         else:
             score = metric(image, target=target)
