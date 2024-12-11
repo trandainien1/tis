@@ -3,6 +3,6 @@ defaults:
   - indices: sub5000.yaml
 dataset:
   _target_: datasets.AlbumentationsImageNet
-  root: "./inputs/imagenet/"
+  root: "./inputs/imagenet"
   split: "val"
   transform: ${transform}
