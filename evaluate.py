@@ -101,8 +101,6 @@ def main(cfg: DictConfig):
     else:
         end_idx = cfg.end_idx
 
-    heatmaps = []
-    init_image = None
     # Loop over the dataset to generate the saliency maps
 
     for idx in tqdm(range(start_idx, end_idx+1),
@@ -110,7 +108,6 @@ def main(cfg: DictConfig):
                     total=(end_idx - start_idx)):
         (image, target) = dataset[idx]
         image = image.unsqueeze(0).cuda()
-        init_image = image
         if cfg.no_target:
             target = torch.argmax(model(image)).item()
 
@@ -139,9 +136,6 @@ def main(cfg: DictConfig):
         metric_scores.append(score)
 
     metric_scores = torch.stack(metric_scores).cpu().numpy()
-    # init_image = init_image.unsqueeze(0)
-    heatmaps = torch.cat((init_image, heatmaps), dim=0)
-    print(heatmaps.shape)
 
     # Save as a csv
     csv_name = os.path.split(cfg.input_npz)[1].split(".npz")[0] + "_" + cfg.metric.name
@@ -159,9 +153,9 @@ def main(cfg: DictConfig):
     print("\nSaving scores to file:", csv_path)
     pd.DataFrame(metric_scores).to_csv(csv_path, header=False, index=False)
 
-    output_npz = f'npz/{cfg.model.name}_{cfg.method.name}_masks.npz'
-    print("\nSaving saliency maps to file: ", output_npz)
-    np.savez(output_npz, heatmaps.cpu().numpy())
+    # output_npz = f'npz/{cfg.model.name}_{cfg.method.name}_masks.npz'
+    # print("\nSaving saliency maps to file: ", output_npz)
+    # np.savez(output_npz, heatmaps.cpu().numpy())
 
 if __name__ == "__main__":
     main()
