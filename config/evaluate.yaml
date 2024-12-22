@@ -10,8 +10,8 @@ defaults:
 
 seed: 12345
 no_target: false
+start_idx: 0
+end_idx: 99
 input_npz: npz/${model.name}_${method.name}_heatmap_{start_idx}_{end_idx}.npz
 output_csv_dir: csv/
 metric_batch_size: 8
-start_idx: 0
-end_idx: 99
