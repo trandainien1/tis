@@ -211,6 +211,7 @@ def main(cfg: DictConfig):
     saliency_maps = torch.stack(saliency_maps_list)
 
     # Save as a npz
+    print(cfg.start_idx)
     if int(cfg.start_idx) == -1:
         output_npz = cfg.output_npz
     else:
