@@ -9,5 +9,5 @@ defaults:
 seed: 12345
 output_npz: npz/${model.name}_${method.name}_heatmap.npz
 no_target: false
-start_idx: 0
-end_idx: 0
+start_idx: -1
+end_idx: -1
