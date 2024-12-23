@@ -211,11 +211,11 @@ def main(cfg: DictConfig):
     saliency_maps = torch.stack(saliency_maps_list)
 
     # Save as a npz
-    print(cfg.start_idx)
     if int(cfg.start_idx) == -1:
-        output_npz = cfg.output_npz
+        cfg.output_npz = cfg.output_npz
     else:
-        output_npz = f'npz/{cfg.model.name}_{cfg.method.name}_heatmap_{cfg.start_idx}_{cfg.end_idx}.npz'
+        print('here')
+        cfg.output_npz = f'npz/{cfg.model.name}_{cfg.method.name}_heatmap_{cfg.start_idx}_{cfg.end_idx}.npz'
 
     if cfg.no_target:
         output_npz += ".notarget"
