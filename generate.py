@@ -215,7 +215,6 @@ def main(cfg: DictConfig):
     if int(cfg.start_idx) == -1:
         cfg.output_npz = cfg.output_npz
     else:
-        print('here')
         cfg.output_npz = f'npz/{cfg.model.name}_{cfg.method.name}_heatmap_{cfg.start_idx}_{cfg.end_idx}.npz'
 
     if cfg.no_target:
