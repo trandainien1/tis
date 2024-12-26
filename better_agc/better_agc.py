@@ -15,7 +15,7 @@ class BetterAGC:
             layer_fusion (str): type of layer-wise aggregation (default: 'sum')
         """
         self.model = model
-        self.timm_model = timm.create_model('vit_base_patch16_224', pretrained=True, class_num=1000).to('cuda')
+        self.timm_model = timm.create_model('vit_base_patch16_224', pretrained=True, num_classes=1000).to('cuda')
         self.timm_model.eval()
         self.head = None
         self.width = None
