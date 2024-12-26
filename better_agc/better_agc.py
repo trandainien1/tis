@@ -2,6 +2,8 @@ import torch
 from einops.layers.torch import Reduce, Rearrange
 import torchvision.transforms as transforms
 import numpy as np
+import timm 
+
 class BetterAGC:
     def __init__(self, model, attention_matrix_layer = 'before_softmax', attention_grad_layer = 'after_softmax', head_fusion='sum', layer_fusion='sum'):
         """
@@ -13,6 +15,8 @@ class BetterAGC:
             layer_fusion (str): type of layer-wise aggregation (default: 'sum')
         """
         self.model = model
+        self.timm_model = timm.create_model('vit_base_patch16_224', pretrained=True, class_num=1000).to('cuda')
+        self.timm_model.eval()
         self.head = None
         self.width = None
         self.head_fusion = head_fusion
@@ -102,7 +106,7 @@ class BetterAGC:
             # print(torch.cuda.memory_allocated()/1024**2)
 
             with torch.no_grad():
-                output_mask = self.model(m)
+                output_mask = self.timm_model(m)
             
             # print("After get output from model: ")
             # print(torch.cuda.memory_allocated()/1024**2)
