@@ -96,7 +96,7 @@ def main(cfg: DictConfig):
     # Computing saliency map
     print("Computing saliency map using", cfg.method.name, "for class", classes[class_idx])
    
-    saliency_map, scores = method(image, class_idx=class_idx).detach().cpu()
+    saliency_map, scores = method(image, class_idx=class_idx)
     
     print('[SCORES SHAPE]')
     print(scores.shape)

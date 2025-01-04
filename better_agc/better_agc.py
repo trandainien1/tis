@@ -165,4 +165,4 @@ class BetterAGC:
         # print(torch.cuda.memory_allocated()/1024**2)
         # print()
 
-        return saliency_map, scores
+        return saliency_map.detach().cpu(), scores
