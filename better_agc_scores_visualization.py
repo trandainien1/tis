@@ -19,6 +19,7 @@ import Methods.AGCAM.ViT_for_AGCAM as ViT_Ours
 import torch.utils.model_zoo as model_zoo
 
 import pandas as pd
+import seaborn as sns
 
 # Define a function to seed everything
 def seed_everything(seed):
