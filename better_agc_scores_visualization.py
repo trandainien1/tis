@@ -118,6 +118,7 @@ def main(cfg: DictConfig):
     plt.xlabel("Columns")
     plt.ylabel("Rows")
     plt.show()
+    plt.savefig('scores heatmap')
 
 if __name__ == "__main__":
     main()
