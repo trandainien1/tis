@@ -110,5 +110,13 @@ def main(cfg: DictConfig):
     df = pd.DataFrame(scores.numpy())
     print(df)
 
+    # Plot the heatmap
+    plt.figure(figsize=(8, 6))  # Optional: Adjust the figure size
+    sns.heatmap(df, annot=True, fmt=".2f", cmap="coolwarm", cbar=True)
+    plt.title("Heatmap of 12x12 Tensor")
+    plt.xlabel("Columns")
+    plt.ylabel("Rows")
+    plt.show()
+
 if __name__ == "__main__":
     main()
