@@ -18,6 +18,8 @@ from matplotlib import pyplot as plt
 import Methods.AGCAM.ViT_for_AGCAM as ViT_Ours
 import torch.utils.model_zoo as model_zoo
 
+import pandas as pd
+
 # Define a function to seed everything
 def seed_everything(seed):
     random.seed(seed)
@@ -105,7 +107,8 @@ def main(cfg: DictConfig):
     # image = image - image.min()
     # image = image/image.max()
     # overlay(image.squeeze(0).cpu(), saliency_map, output_file=cfg.output_file)
-
+    df = pd.DataFrame(scores.numpy())
+    print(df)
 
 if __name__ == "__main__":
     main()
