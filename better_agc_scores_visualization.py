@@ -128,7 +128,9 @@ def main(cfg: DictConfig):
     plt.title("Distribution of Tensor Values")
     plt.xlabel("Value")
     plt.ylabel("Frequency")
-    plt.savefig(f'{cfg.input_file.split('.')[0]}_scores_distribution')
+    
+    file_name = cfg.input_file.split('.')[0]
+    plt.savefig(f'{file_name}_scores_distribution')
 
 
     # plot all heatmaps
