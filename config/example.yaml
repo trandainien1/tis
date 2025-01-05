@@ -6,6 +6,6 @@ defaults:
   - _self_
 
 seed: 12345
-input_file: input.jpg
+input_file: ILSVRC2012_val_00000125.jpg
 output_file: output.jpg
 class_idx: null
