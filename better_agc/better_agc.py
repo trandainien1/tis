@@ -156,6 +156,8 @@ class BetterAGC:
             head_cams=head_cams,
             prediction=predicted_class, output_truth=output_truth
         )
+
+        scores += 1
         # print("After generate scores: ")
         # print(torch.cuda.memory_allocated()/1024**2)
         # print()
