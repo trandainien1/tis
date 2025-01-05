@@ -138,7 +138,10 @@ def main(cfg: DictConfig):
     print()
     print('[Saliency maps of heads]', saliency_map_of_heads.shape)
 
-
+    print(f'shape of saliency map of {cfg.method.name}: ', saliency_map.shape)
+    image = image - image.min()
+    image = image/image.max()
+    overlay(image.squeeze(0).cpu(), saliency_map, output_file=f'{file_name}_heatmap')
 
 
 
