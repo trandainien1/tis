@@ -115,9 +115,26 @@ def main(cfg: DictConfig):
     plt.show()
     plt.savefig('scores heatmap')
 
+    # plot distribution of scores
+    # Flatten the tensor to a 1D array
+    values = scores.numpy().flatten()
+
+    # Convert to a DataFrame for better manipulation (optional)
+    df = pd.DataFrame(values, columns=["Values"])
+
+    # Plot the distribution using a histogram and KDE
+    plt.figure(figsize=(8, 6))
+    sns.histplot(df["Values"], kde=True, color="blue", bins=15, alpha=0.7)
+    plt.title("Distribution of Tensor Values")
+    plt.xlabel("Value")
+    plt.ylabel("Frequency")
+    plt.savefig(f'{cfg.input_file} scores distribution')
+
+
     # plot all heatmaps
     print()
     print('[Saliency maps of heads]', saliency_map_of_heads.shape)
+
 
 
 
