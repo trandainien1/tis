@@ -99,19 +99,14 @@ def main(cfg: DictConfig):
     # Computing saliency map
     print("Computing saliency map using", cfg.method.name, "for class", classes[class_idx])
    
-    saliency_map, scores = method(image, class_idx=class_idx)
+    saliency_map, scores, saliency_map_of_heads = method(image, class_idx=class_idx)
     
-    print('[SCORES SHAPE]')
-    print(scores.shape)
+    print('[SCORES SHAPE]', scores.shape)
 
-    # print(f'shape of saliency map of {cfg.method.name}: ', saliency_map.shape)
-    # image = image - image.min()
-    # image = image/image.max()
-    # overlay(image.squeeze(0).cpu(), saliency_map, output_file=cfg.output_file)
     df = pd.DataFrame(scores.numpy())
     print(df)
 
-    # Plot the heatmap
+    # Plot the scores heatmap
     plt.figure(figsize=(8, 6))  # Optional: Adjust the figure size
     sns.heatmap(df, annot=True, fmt=".2f", cmap="coolwarm", cbar=True)
     plt.title("Heatmap of 12x12 Tensor")
@@ -119,6 +114,13 @@ def main(cfg: DictConfig):
     plt.ylabel("Rows")
     plt.show()
     plt.savefig('scores heatmap')
+
+    # plot all heatmaps
+    print()
+    print('[Saliency maps of heads]', saliency_map_of_heads.shape)
+
+
+
 
 if __name__ == "__main__":
     main()
