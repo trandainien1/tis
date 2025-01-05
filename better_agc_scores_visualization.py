@@ -130,6 +130,7 @@ def main(cfg: DictConfig):
     plt.ylabel("Frequency")
     
     file_name = cfg.input_file.split('.')[0]
+    print('[File name]', file_name)
     plt.savefig(f'{file_name}_scores_distribution')
 
 
