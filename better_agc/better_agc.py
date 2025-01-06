@@ -95,7 +95,8 @@ class BetterAGC:
         self.gradient = Rearrange('b l hd z (h w)  -> b l hd z h w', h=self.width, w=self.width)(self.gradient) # *Niên: chỗ này tách từng token (1, 196) thành từng patch (1, 14, 14)
         self.attn = Rearrange('b l hd z (h w)  -> b l hd z h w', h=self.width, w=self.width)(self.attn) # *Niên: chỗ này tách từng token (1, 196) thành từng patch (1, 14, 14)
 
-        return prediction, mask, output
+        # return prediction, mask, output
+        return prediction, self.attn, output
 
     def generate_scores(self, head_cams, prediction, output_truth, image):
         with torch.no_grad():
