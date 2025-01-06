@@ -155,7 +155,7 @@ class BetterAGC:
         if class_idx is None:
             class_idx = predicted_class
             print("class idx", class_idx)
-
+        print('[DEBUG] head_cams shape: ', head_cams.shape)
         # Generate the saliency map for image x and class_idx
         scores = self.generate_scores(
             image=x,
