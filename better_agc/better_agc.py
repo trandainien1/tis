@@ -3,6 +3,7 @@ from einops.layers.torch import Reduce, Rearrange
 import torchvision.transforms as transforms
 import numpy as np
 import timm 
+import torch.nn.functional as F
 
 class BetterAGC:
     def __init__(self, model, attention_matrix_layer = 'before_softmax', attention_grad_layer = 'after_softmax', head_fusion='sum', layer_fusion='sum'):
@@ -122,7 +123,8 @@ class BetterAGC:
             # print(torch.cuda.memory_allocated()/1024**2)
     
             agc_scores = output_mask[:, prediction.item()] - output_truth[0, prediction.item()]
-            agc_scores = torch.sigmoid(agc_scores)
+            # agc_scores = torch.sigmoid(agc_scores)
+            agc_scores = F.softmax(agc_scores)
     
             agc_scores = agc_scores.reshape(head_cams[0].shape[0], head_cams[0].shape[1])
 
