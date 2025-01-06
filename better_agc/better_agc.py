@@ -3,6 +3,7 @@ from einops.layers.torch import Reduce, Rearrange
 import torchvision.transforms as transforms
 import numpy as np
 import timm 
+import torch.nn.functional as F
 
 class BetterAGC:
     def __init__(self, model, attention_matrix_layer = 'before_softmax', attention_grad_layer = 'after_softmax', head_fusion='sum', layer_fusion='sum'):
@@ -91,8 +92,10 @@ class BetterAGC:
     def generate_scores(self, head_cams, prediction, output_truth, image):
         with torch.no_grad():
             tensor_heatmaps = head_cams[0]
+            
             tensor_heatmaps = tensor_heatmaps.reshape(144, 1, 14, 14)
-            tensor_heatmaps = transforms.Resize((224, 224))(tensor_heatmaps)
+            # tensor_heatmaps = transforms.Resize((224, 224))(tensor_heatmaps)
+            tensor_heatmaps = F.interpolate(tensor_heatmaps, size=(224, 224), mode='bilinear', align_corners=False)
     
             # Compute min and max along each image
             min_vals = tensor_heatmaps.amin(dim=(2, 3), keepdim=True)  # Min across width and height
