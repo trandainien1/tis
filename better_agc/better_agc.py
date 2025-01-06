@@ -86,10 +86,14 @@ class BetterAGC:
 
         # aggregation of CAM of all heads and all layers and reshape the final CAM.
         mask = mask[:, :, :, 1:].unsqueeze(0) # * niên: chỗ này thêm 1 ở đầu (ví dụ: (2) -> (1, 2)) và 1: là bỏ token class
+        self.gradient = self.gradient[:, :, :, 1:].unsqueeze(0) # * niên: chỗ này thêm 1 ở đầu (ví dụ: (2) -> (1, 2)) và 1: là bỏ token class
+        self.attn = self.attn[:, :, :, 1:].unsqueeze(0) # * niên: chỗ này thêm 1 ở đầu (ví dụ: (2) -> (1, 2)) và 1: là bỏ token class
         # print(mask.shape)
 
         # *Niên:Thay vì tính tổng theo blocks và theo head như công thức để ra 1 mask cuối cùng là CAM thì niên sẽ giữ lại tất cả các mask của các head ở mỗi block
         mask = Rearrange('b l hd z (h w)  -> b l hd z h w', h=self.width, w=self.width)(mask) # *Niên: chỗ này tách từng token (1, 196) thành từng patch (1, 14, 14)
+        self.gradient = Rearrange('b l hd z (h w)  -> b l hd z h w', h=self.width, w=self.width)(self.gradient) # *Niên: chỗ này tách từng token (1, 196) thành từng patch (1, 14, 14)
+        self.attn = Rearrange('b l hd z (h w)  -> b l hd z h w', h=self.width, w=self.width)(self.attn) # *Niên: chỗ này tách từng token (1, 196) thành từng patch (1, 14, 14)
 
         return prediction, mask, output
 
@@ -130,7 +134,7 @@ class BetterAGC:
 
     def generate_saliency(self, head_cams, agc_scores):
         # mask = (agc_scores.view(12, 12, 1, 1, 1) * head_cams[0]).sum(axis=(0, 1))
-        mask = ((agc_scores.view(12, 12, 1, 1, 1) + self.gradient) * self.attn).sum(axis=(0, 1))
+        mask = ((agc_scores.view(12, 12, 1, 1, 1) + self.gradient[0]) * self.attn[0]).sum(axis=(0, 1))
 
         mask = mask.squeeze()
         return mask
