@@ -79,6 +79,11 @@ class BetterAGC:
         attn = torch.sigmoid(attn) # Here, the variable attn is the attention score matrices newly normalized with sigmoid, which are eqaul to the feature maps F^k_h in Equation 2 in the methodology part.
         mask = gradient * attn
 
+        self.gradient = gradient
+        self.attn = attn
+        print('[DEBUG] gradient shape: ', self.gradient.shape)
+        print('[DEBUG] attn shape: ', self.attn.shape)
+
         # aggregation of CAM of all heads and all layers and reshape the final CAM.
         mask = mask[:, :, :, 1:].unsqueeze(0) # * niên: chỗ này thêm 1 ở đầu (ví dụ: (2) -> (1, 2)) và 1: là bỏ token class
         # print(mask.shape)
@@ -124,7 +129,8 @@ class BetterAGC:
             return agc_scores
 
     def generate_saliency(self, head_cams, agc_scores):
-        mask = (agc_scores.view(12, 12, 1, 1, 1) * head_cams[0]).sum(axis=(0, 1))
+        # mask = (agc_scores.view(12, 12, 1, 1, 1) * head_cams[0]).sum(axis=(0, 1))
+        mask = ((agc_scores.view(12, 12, 1, 1, 1) + self.gradient) * self.attn).sum(axis=(0, 1))
 
         mask = mask.squeeze()
         return mask
@@ -157,7 +163,6 @@ class BetterAGC:
             prediction=predicted_class, output_truth=output_truth
         )
 
-        scores += 1
         # print("After generate scores: ")
         # print(torch.cuda.memory_allocated()/1024**2)
         # print()
