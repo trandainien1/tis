@@ -5,6 +5,7 @@ import numpy as np
 import timm 
 import torch.nn.functional as F
 
+
 class BetterAGC:
     def __init__(self, model, attention_matrix_layer = 'before_softmax', attention_grad_layer = 'after_softmax', head_fusion='sum', layer_fusion='sum'):
         """
@@ -16,8 +17,6 @@ class BetterAGC:
             layer_fusion (str): type of layer-wise aggregation (default: 'sum')
         """
         self.model = model
-        self.timm_model = timm.create_model('vit_base_patch16_224', pretrained=True, num_classes=1000).to('cuda')
-        self.timm_model.eval()
         self.head = None
         self.width = None
         self.head_fusion = head_fusion
@@ -80,24 +79,14 @@ class BetterAGC:
         attn = torch.sigmoid(attn) # Here, the variable attn is the attention score matrices newly normalized with sigmoid, which are eqaul to the feature maps F^k_h in Equation 2 in the methodology part.
         mask = gradient * attn
 
-        self.gradient = gradient
-        self.attn = attn
-        print('[DEBUG] gradient shape: ', self.gradient.shape)
-        print('[DEBUG] attn shape: ', self.attn.shape)
-
         # aggregation of CAM of all heads and all layers and reshape the final CAM.
         mask = mask[:, :, :, 1:].unsqueeze(0) # * niên: chỗ này thêm 1 ở đầu (ví dụ: (2) -> (1, 2)) và 1: là bỏ token class
-        self.gradient = self.gradient[:, :, :, 1:].unsqueeze(0) # * niên: chỗ này thêm 1 ở đầu (ví dụ: (2) -> (1, 2)) và 1: là bỏ token class
-        self.attn = self.attn[:, :, :, 1:].unsqueeze(0) # * niên: chỗ này thêm 1 ở đầu (ví dụ: (2) -> (1, 2)) và 1: là bỏ token class
         # print(mask.shape)
 
         # *Niên:Thay vì tính tổng theo blocks và theo head như công thức để ra 1 mask cuối cùng là CAM thì niên sẽ giữ lại tất cả các mask của các head ở mỗi block
         mask = Rearrange('b l hd z (h w)  -> b l hd z h w', h=self.width, w=self.width)(mask) # *Niên: chỗ này tách từng token (1, 196) thành từng patch (1, 14, 14)
-        self.gradient = Rearrange('b l hd z (h w)  -> b l hd z h w', h=self.width, w=self.width)(self.gradient) # *Niên: chỗ này tách từng token (1, 196) thành từng patch (1, 14, 14)
-        self.attn = Rearrange('b l hd z (h w)  -> b l hd z h w', h=self.width, w=self.width)(self.attn) # *Niên: chỗ này tách từng token (1, 196) thành từng patch (1, 14, 14)
 
-        # return prediction, mask, output
-        return prediction, self.attn, output
+        return prediction, mask, output
 
     def generate_scores(self, head_cams, prediction, output_truth, image):
         with torch.no_grad():
@@ -117,14 +106,13 @@ class BetterAGC:
             # print(torch.cuda.memory_allocated()/1024**2)
 
             with torch.no_grad():
-                output_mask = self.timm_model(m)
+                output_mask = self.model(m)
             
             # print("After get output from model: ")
             # print(torch.cuda.memory_allocated()/1024**2)
     
             agc_scores = output_mask[:, prediction.item()] - output_truth[0, prediction.item()]
-            # agc_scores = torch.sigmoid(agc_scores)
-            agc_scores = F.softmax(agc_scores)
+            agc_scores = torch.sigmoid(agc_scores)
     
             agc_scores = agc_scores.reshape(head_cams[0].shape[0], head_cams[0].shape[1])
 
@@ -136,8 +124,7 @@ class BetterAGC:
             return agc_scores
 
     def generate_saliency(self, head_cams, agc_scores):
-        # mask = (agc_scores.view(12, 12, 1, 1, 1) * head_cams[0]).sum(axis=(0, 1))
-        mask = ((agc_scores.view(12, 12, 1, 1, 1) + self.gradient[0]) * self.attn[0]).sum(axis=(0, 1))
+        mask = (agc_scores.view(12, 12, 1, 1, 1) * head_cams[0]).sum(axis=(0, 1))
 
         mask = mask.squeeze()
         return mask
@@ -162,16 +149,13 @@ class BetterAGC:
         if class_idx is None:
             class_idx = predicted_class
             print("class idx", class_idx)
-        print('[DEBUG] head_cams shape: ', head_cams.shape)
+
         # Generate the saliency map for image x and class_idx
         scores = self.generate_scores(
             image=x,
             head_cams=head_cams,
             prediction=predicted_class, output_truth=output_truth
         )
-
-        print('[DEBUG] score shape: ', scores.shape)
-
         # print("After generate scores: ")
         # print(torch.cuda.memory_allocated()/1024**2)
         # print()
@@ -181,5 +165,5 @@ class BetterAGC:
         # print(torch.cuda.memory_allocated()/1024**2)
         # print()
 
-        # return saliency_map.detach().cpu(), scores.detach().cpu(), head_cams.detach().cpu()
-        return saliency_map.detach().cpu()
+        return saliency_map
+
