@@ -186,14 +186,8 @@ def main(cfg: DictConfig):
     # Keep saliency maps in a list
     saliency_maps_list = []
 
-    count = 0
     # Loop over the dataset to generate the saliency maps
     for image, class_idx in tqdm(dataset, desc="Computing saliency maps"):
-        count += 1
-        if count < cfg.start_idx:
-            continue
-        if count > cfg.end_idx + 1:
-            break
 
         image = image.unsqueeze(0).cuda()
 
@@ -215,7 +209,7 @@ def main(cfg: DictConfig):
     if int(cfg.start_idx) == -1:
         cfg.output_npz = cfg.output_npz
     else:
-        cfg.output_npz = f'npz/{cfg.model.name}_{cfg.method.name}_heatmap_{cfg.start_idx}_{cfg.end_idx}.npz'
+        cfg.output_npz = f'npz/{cfg.model.name}_{cfg.method.name}_heatmap.npz'
 
     if cfg.no_target:
         output_npz += ".notarget"

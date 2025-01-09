@@ -4,12 +4,8 @@ import torchvision.transforms as transforms
 import numpy as np
 import timm 
 import torch.nn.functional as F
-<<<<<<< HEAD
-=======
 
->>>>>>> 036d8308ce840e9d24879eb56699e7159557f5eb
-
-class BetterAGC:
+class BetterAGC_plus1:
     def __init__(self, model, attention_matrix_layer = 'before_softmax', attention_grad_layer = 'after_softmax', head_fusion='sum', layer_fusion='sum'):
         """
         Args:
@@ -94,14 +90,9 @@ class BetterAGC:
     def generate_scores(self, head_cams, prediction, output_truth, image):
         with torch.no_grad():
             tensor_heatmaps = head_cams[0]
-            
             tensor_heatmaps = tensor_heatmaps.reshape(144, 1, 14, 14)
-
-            # ----------- upsampling --------------
-            # tensor_heatmaps = transforms.Resize((224, 224))(tensor_heatmaps)
-            tensor_heatmaps = F.interpolate(tensor_heatmaps, size=(224, 224), mode='bilinear', align_corners=False)
+            tensor_heatmaps = transforms.Resize((224, 224))(tensor_heatmaps)
     
-            # ----------- Smooth -------------------
             # Compute min and max along each image
             min_vals = tensor_heatmaps.amin(dim=(2, 3), keepdim=True)  # Min across width and height
             max_vals = tensor_heatmaps.amax(dim=(2, 3), keepdim=True)  # Max across width and height
@@ -121,7 +112,8 @@ class BetterAGC:
     
             agc_scores = output_mask[:, prediction.item()] - output_truth[0, prediction.item()]
             agc_scores = torch.sigmoid(agc_scores)
-    
+            agc_scores += 1
+
             agc_scores = agc_scores.reshape(head_cams[0].shape[0], head_cams[0].shape[1])
 
             del output_mask  # Delete unnecessary variables that are no longer needed
@@ -174,4 +166,3 @@ class BetterAGC:
         # print()
 
         return saliency_map
-
