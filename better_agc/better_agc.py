@@ -94,9 +94,12 @@ class BetterAGC:
             tensor_heatmaps = head_cams[0]
             
             tensor_heatmaps = tensor_heatmaps.reshape(144, 1, 14, 14)
+
+            # ----------- upsampling --------------
             # tensor_heatmaps = transforms.Resize((224, 224))(tensor_heatmaps)
             tensor_heatmaps = F.interpolate(tensor_heatmaps, size=(224, 224), mode='bilinear', align_corners=False)
     
+            # ----------- Smooth -------------------
             # Compute min and max along each image
             min_vals = tensor_heatmaps.amin(dim=(2, 3), keepdim=True)  # Min across width and height
             max_vals = tensor_heatmaps.amax(dim=(2, 3), keepdim=True)  # Max across width and height
