@@ -10,7 +10,8 @@ defaults:
 
 seed: 12345
 no_target: false
-input_npz: npz/${model.name}_${method.name}_heatmap
+# input_npz: npz/${model.name}_${method.name}_heatmap
+input_npz: /kaggle/working/tis/npz/vit_b16_tis_heatmap.npz
 output_csv_dir: csv/
 metric_batch_size: 8
 start_idx: -1
