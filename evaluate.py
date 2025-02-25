@@ -72,11 +72,10 @@ def main(cfg: DictConfig):
     if cfg.metric.npz_only:
         # Get saliencies from npz
 
-        if cfg.start_idx != -1:
-            cfg.input_npz = cfg.input_npz + '_' + str(cfg.start_idx) + '_' + str(cfg.end_idx) + '.npz' 
-        else:
-            cfg.input_npz = cfg.input_npz + '.npz' 
-
+        # if cfg.start_idx != -1:
+        #     cfg.input_npz = cfg.input_npz + '_' + str(cfg.start_idx) + '_' + str(cfg.end_idx) + '.npz' 
+        # else:
+        cfg.input_npz = cfg.input_npz + '.npz' 
 
         print("Loading saliency maps from", cfg.input_npz, end="\n\n")
         saliency_maps = torch.tensor(np.load(cfg.input_npz)['arr_0'])
