@@ -201,6 +201,7 @@ def main(cfg: DictConfig):
 
         # Add the current map to the list of saliency maps
         saliency_maps_list.append(cur_map)
+        num_img += 1
 
 
     # Stack into a single tensor
