@@ -186,9 +186,11 @@ def main(cfg: DictConfig):
     # Keep saliency maps in a list
     saliency_maps_list = []
 
+    num_img = 0
     # Loop over the dataset to generate the saliency maps
     for image, class_idx in tqdm(dataset, desc="Computing saliency maps"):
-
+        if num_img > cfg.end_idx:
+            break
         image = image.unsqueeze(0).cuda()
 
         if cfg.no_target:

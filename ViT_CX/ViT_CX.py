@@ -4,8 +4,8 @@ import sys
 cwd = os.getcwd()
 sys.path.insert(1, str(cwd)+'\\ViT_CX')
 sys.path.insert(1, str(cwd)+'\\ViT_CX\\py_cam')
-from cam import get_feature_map
-from causal_score import causal_score
+from .cam import get_feature_map
+from .causal_score import causal_score
 import numpy as np
 import cv2
 import copy
