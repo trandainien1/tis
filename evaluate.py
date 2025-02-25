@@ -25,7 +25,7 @@ import matplotlib.pyplot as plt
 import gc
 import sys
 
-print('[DEBUG]: ', os.getcwd())
+# print('[DEBUG]: ', os.getcwd())
 
 gc.collect()
 torch.cuda.empty_cache()
