@@ -23,6 +23,9 @@ import torch.utils.model_zoo as model_zoo
 import torchvision.transforms as transforms
 import matplotlib.pyplot as plt
 import gc
+import sys
+
+print('[DEBUG]: ', os.getcwd())
 
 gc.collect()
 torch.cuda.empty_cache()
