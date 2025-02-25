@@ -1,10 +1,6 @@
 # @package _global_
-_target_: torch.utils.data.Subset
-defaults:
-  - indices: sub2000.yaml
+
 dataset:
-  # dataset:
-  _target_: datasets.BboxesImageNet
-  root: "./inputs/imagenet"
-  split: "val"
-  transform: ${transform} 
+  dataset:
+    _target_: datasets.BboxesImageNet
+    
