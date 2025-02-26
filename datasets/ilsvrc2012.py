@@ -10,21 +10,6 @@ import os
 
 import xml.etree.ElementTree as ET
 
-
-class AlbumentationsImageNet(ImageNet):
-    def __init__(self, transform=None, **kwargs):
-
-        if isinstance(transform, BasicTransform) or isinstance(transform, BaseCompose):
-            def transform_fn(image):
-                np_image = np.array(image)
-                return transform(image=np_image, bboxes=[])['image']
-
-        else:
-            transform_fn = transform
-
-        super().__init__(transform=transform_fn, **kwargs)
-
-
 class BboxesImageNet(ImageNet):
     def __init__(self, root: str, split: str = "val", **kwargs: Any) -> None:
         super().__init__(root, split, **kwargs)
@@ -101,6 +86,18 @@ class BboxesImageNet(ImageNet):
 
         return bboxes
 
+class AlbumentationsImageNet(ImageNet):
+    def __init__(self, transform=None, **kwargs):
+
+        if isinstance(transform, BasicTransform) or isinstance(transform, BaseCompose):
+            def transform_fn(image):
+                np_image = np.array(image)
+                return transform(image=np_image, bboxes=[])['image']
+
+        else:
+            transform_fn = transform
+
+        super().__init__(transform=transform_fn, **kwargs)
 
 def parse_bbox_archive(root: str, file: Optional[str] = None, folder: str = "bbox", split="val") -> None:
     """Parse the bbox validation archive of the ImageNet2012 classification dataset and
