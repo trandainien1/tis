@@ -12,6 +12,7 @@ import xml.etree.ElementTree as ET
 
 class BboxesImageNet(ImageNet):
     def __init__(self, root: str, split: str = "val", **kwargs: Any) -> None:
+        print('[DEBUG]: init function')
         super().__init__(root, split, **kwargs)
         
         self.bbox_root = os.path.join(self.root, "bbox")
