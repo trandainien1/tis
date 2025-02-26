@@ -2,5 +2,5 @@
 
 dataset:
   dataset:
-    _target_: datasets.BboxesImageNet
+    _target_: datasets.AlbumentationsImageNet
     
