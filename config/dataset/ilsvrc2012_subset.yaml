@@ -2,7 +2,7 @@ _target_: torch.utils.data.Subset
 defaults:
   - indices: sub2000.yaml
 dataset:
-  _target_: datasets.AlbumentationsImageNet
+  _target_: datasets.BboxesImageNet
   root: "./inputs/imagenet"
   split: "val"
   transform: ${transform}
