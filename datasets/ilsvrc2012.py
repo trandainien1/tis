@@ -16,6 +16,7 @@ class BboxesImageNet(ImageNet):
         print('[DEBUG] root: ', root)
         print('[DEBUG] split: ', split)
         super().__init__(root, split, **kwargs)
+        print('[DEBUG] init ImageNet successfully: ', split)
         
         self.bbox_root = os.path.join(self.root, "bbox")
         self.bbox_split_root = os.path.join(self.bbox_root, split)
