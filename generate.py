@@ -169,6 +169,7 @@ def main(cfg: DictConfig):
         model.load_state_dict(state_dict, strict=True)
         model = model.eval()
     else:
+        
         model = instantiate(cfg.model.init).cuda()
         model.eval()
 
