@@ -117,6 +117,5 @@ def main(cfg: DictConfig):
     image = image/image.max()
     overlay(image.squeeze(0).cpu(), saliency_map, output_file=cfg.output_file)
 
-
 if __name__ == "__main__":
     main()
