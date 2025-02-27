@@ -198,7 +198,7 @@ def main(cfg: DictConfig):
             class_idx = None
 
         # Compute current saliency map
-        _, cur_map = method(image, class_idx=class_idx).detach().cpu()
+        cur_map = method(image, class_idx=class_idx).detach().cpu()
 
         # Add the current map to the list of saliency maps
         saliency_maps_list.append(cur_map)
