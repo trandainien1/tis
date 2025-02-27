@@ -19,6 +19,7 @@ We changed the model creation functions to use timm weights as defined in the hy
 instead of fixed weights defined by the authors
 """
 
+print('[DEBUG] INIT bt_wrapper')
 
 def vit_base_patch16_224(pretrained=False, model_name="vit_base_patch16_224", pretrained_cfg=None, **kwargs):
     print('[DEBUG1]')
