@@ -4,13 +4,9 @@ import torchvision.transforms as transforms
 import numpy as np
 import timm 
 import torch.nn.functional as F
-<<<<<<< HEAD
-=======
 
->>>>>>> 036d8308ce840e9d24879eb56699e7159557f5eb
-
-class BetterAGC:
-    def __init__(self, model, attention_matrix_layer = 'before_softmax', attention_grad_layer = 'after_softmax', head_fusion='sum', layer_fusion='sum'):
+class ScoreAGC:
+    def __init__(self, model, attention_matrix_layer = 'before_softmax', attention_grad_layer = 'after_softmax', head_fusion='sum', layer_fusion='sum', normalize_cam_heads=True, score_minmax_norm=True, add_noise=False, plus=1, vitcx_score_formula=False, is_head_fuse=False):
         """
         Args:
             model (nn.Module): the Vision Transformer model to be explained
@@ -26,6 +22,12 @@ class BetterAGC:
         self.layer_fusion = layer_fusion
         self.attn_matrix = []
         self.grad_attn = []
+        self.normalize_cam_heads = normalize_cam_heads
+        self.score_minmax_norm = score_minmax_norm
+        self.add_noise = add_noise
+        self.plus = plus
+        self.vitcx_score_formula = vitcx_score_formula
+        self.is_head_fuse = is_head_fuse
 
         for layer_num, (name, module) in enumerate(self.model.named_modules()):
             if attention_matrix_layer in name:
@@ -87,41 +89,67 @@ class BetterAGC:
         # print(mask.shape)
 
         # *Niên:Thay vì tính tổng theo blocks và theo head như công thức để ra 1 mask cuối cùng là CAM thì niên sẽ giữ lại tất cả các mask của các head ở mỗi block
-        mask = Rearrange('b l hd z (h w)  -> b l hd z h w', h=self.width, w=self.width)(mask) # *Niên: chỗ này tách từng token (1, 196) thành từng patch (1, 14, 14)
+        if self.is_head_fuse:
+            mask = Reduce('b l h z p -> b l z p', reduction=self.head_fusion)(mask)
+            mask = Rearrange('b l z (h w)  -> b l z h w', h=self.width, w=self.width)(mask)
+        else:
+            mask = Rearrange('b l hd z (h w)  -> b l hd z h w', h=self.width, w=self.width)(mask) # *Niên: chỗ này tách từng token (1, 196) thành từng patch (1, 14, 14)
 
         return prediction, mask, output
 
     def generate_scores(self, head_cams, prediction, output_truth, image):
         with torch.no_grad():
             tensor_heatmaps = head_cams[0]
-            
-            tensor_heatmaps = tensor_heatmaps.reshape(144, 1, 14, 14)
-
-            # ----------- upsampling --------------
-            # tensor_heatmaps = transforms.Resize((224, 224))(tensor_heatmaps)
-            tensor_heatmaps = F.interpolate(tensor_heatmaps, size=(224, 224), mode='bilinear', align_corners=False)
+            if self.is_head_fuse:
+                tensor_heatmaps = tensor_heatmaps.reshape(12, 1, 14, 14)
+            else:
+                tensor_heatmaps = tensor_heatmaps.reshape(144, 1, 14, 14)
+            tensor_heatmaps = transforms.Resize((224, 224))(tensor_heatmaps)
     
-            # ----------- Smooth -------------------
-            # Compute min and max along each image
-            min_vals = tensor_heatmaps.amin(dim=(2, 3), keepdim=True)  # Min across width and height
-            max_vals = tensor_heatmaps.amax(dim=(2, 3), keepdim=True)  # Max across width and height
-            # Normalize using min-max scaling
-            tensor_heatmaps = (tensor_heatmaps - min_vals) / (max_vals - min_vals + 1e-7)  # Add small value to avoid division by zero
-            # print("before multiply img with mask: ")
-            # print(torch.cuda.memory_allocated()/1024**2)
-            m = torch.mul(tensor_heatmaps, image)
-            # print("After multiply img with mask scores: ")
-            # print(torch.cuda.memory_allocated()/1024**2)
+            if self.normalize_cam_heads:
+                # Compute min and max along each image
+                min_vals = tensor_heatmaps.amin(dim=(2, 3), keepdim=True)  # Min across width and height
+                max_vals = tensor_heatmaps.amax(dim=(2, 3), keepdim=True)  # Max across width and height
+                # Normalize using min-max scaling
+                tensor_heatmaps = (tensor_heatmaps - min_vals) / (max_vals - min_vals + 1e-7)  # Add small value to avoid division by zero
+            
+            if self.add_noise:
+                # -------------- add noise ------------
+                N  = tensor_heatmaps.shape[0]
+                H = tensor_heatmaps.shape[2]
+                W = tensor_heatmaps.shape[3]
+                # Generate the inverse of masks, i.e., 1-M_i
+                masks_inverse=torch.from_numpy(np.repeat((1-tensor_heatmaps.cpu().numpy())[:, :, np.newaxis,:], 3, axis=2)).cuda()
+                masks_inverse = masks_inverse.squeeze(1)
+
+                random_whole=torch.randn([N]+list((3,H,W))).cuda()* 0.1
+                noise_to_add = random_whole * masks_inverse
+
+                mask = torch.mul(tensor_heatmaps, image)
+                m = mask + noise_to_add
+            else:
+                m = torch.mul(tensor_heatmaps, image)
 
             with torch.no_grad():
                 output_mask = self.model(m)
-            
+
+            if self.vitcx_score_formula:
+                p_mask_with_noise = output_mask[:, prediction.item()]
+                p_x_with_noise = self.model(image + noise_to_add)[0, prediction.item()]
+                class_p = output_truth[0, prediction.item()]
+                agc_scores = p_mask_with_noise - p_x_with_noise + class_p
+            else:
             # print("After get output from model: ")
             # print(torch.cuda.memory_allocated()/1024**2)
-    
-            agc_scores = output_mask[:, prediction.item()] - output_truth[0, prediction.item()]
-            agc_scores = torch.sigmoid(agc_scores)
-    
+                agc_scores = output_mask[:, prediction.item()] - output_truth[0, prediction.item()]
+            
+            if self.score_minmax_norm:   
+                agc_scores = (agc_scores - agc_scores.min() ) / (agc_scores.max() - agc_scores.min())
+            else:
+                agc_scores = torch.sigmoid(agc_scores)
+            
+            agc_scores += self.plus
+
             agc_scores = agc_scores.reshape(head_cams[0].shape[0], head_cams[0].shape[1])
 
             del output_mask  # Delete unnecessary variables that are no longer needed
@@ -132,11 +160,17 @@ class BetterAGC:
             return agc_scores
 
     def generate_saliency(self, head_cams, agc_scores):
-        mask = (agc_scores.view(12, 12, 1, 1, 1) * head_cams[0]).sum(axis=(0, 1))
+        if self.is_head_fuse:
+            mask = (agc_scores.view(1, 12, 1, 1, 1) * head_cams[0]).sum(axis=(0, 1))
+        else:
+            mask = (agc_scores.view(12, 12, 1, 1, 1) * head_cams[0]).sum(axis=(0, 1))
 
         mask = mask.squeeze()
         return mask
 
+    def generate(self, x, class_idx=None):
+        return self(x, class_idx)
+        
     def __call__(self, x, class_idx=None):
 
         # Check that we get only one image
@@ -156,7 +190,7 @@ class BetterAGC:
         # Define the class to explain. If not explicit, use the class predicted by the model
         if class_idx is None:
             class_idx = predicted_class
-            print("class idx", class_idx)
+            # print("class idx", class_idx)
 
         # Generate the saliency map for image x and class_idx
         scores = self.generate_scores(
@@ -173,5 +207,5 @@ class BetterAGC:
         # print(torch.cuda.memory_allocated()/1024**2)
         # print()
 
-        return saliency_map
+        return predicted_class, saliency_map
 
