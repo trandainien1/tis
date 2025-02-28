@@ -11,7 +11,7 @@ from ViT_CX.ViT_CX import ViT_CX, reshape_function_vit
 from torchvision.models import VisionTransformer as VisionVIT
 from timm.models.vision_transformer import VisionTransformer as TimmVIT
 
-
+print('DEBUG1')
 class ViTCXWrapper:
     """
     Wrapper for ViT-CX: Wrap ViT-CX method to allow similar usage in scripts
@@ -21,7 +21,9 @@ class ViTCXWrapper:
         initialisation of the class
         :param model: model used for the maps computations
         """
+        print('DEBUG2')
         self.model = model
+        print('DEBUG3')
         self.batch_size = batch_size
 
     def __call__(self, x, class_idx=None):
