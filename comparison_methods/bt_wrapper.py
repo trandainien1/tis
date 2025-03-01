@@ -95,6 +95,7 @@ class BTHWrapper(BTWrapperCommon):
         :param model: model used for the maps computations
         :param start_layer: start layer of the method
         """
+        
         super().__init__(model, start_layer)
 
     def __call__(self, x, class_idx=None):

@@ -2,6 +2,7 @@ import torch
 
 import sys
 
+print('[DEBUG0]')
 sys.path.append("comparison_methods/chefer1")
 
 from baselines.ViT.ViT_LRP import VisionTransformer, _conv_filter, _cfg
@@ -18,7 +19,7 @@ We changed the model creation functions to use timm weights as defined in the hy
 instead of fixed weights defined by the authors
 """
 
-
+print('[DEBUG1]')
 def vit_base_patch16_224(pretrained=False, model_name="vit_base_patch16_224", pretrained_cfg=None, **kwargs):
     model = VisionTransformer(
         patch_size=16, embed_dim=768, depth=12, num_heads=12, mlp_ratio=4, qkv_bias=True, **kwargs)
