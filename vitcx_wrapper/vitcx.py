@@ -1,32 +1,60 @@
-# Wrappers classes for comparison in benchmarks
-import torch
-import sys
-import copy
 import os
 import sys
+# Get the current working directory
+cwd = os.getcwd()
+sys.path.insert(1, str(cwd)+'\\ViT_CX')
+sys.path.insert(1, str(cwd)+'\\ViT_CX\\py_cam')
+from .cam import get_feature_map
+from .causal_score import causal_score
+import numpy as np
+import cv2
+import copy
+from skimage.transform import resize
+from sklearn.cluster import AgglomerativeClustering
+from scipy.special import softmax
+import torch
+import torch.nn as nn
+import torch.backends.cudnn as cudnn
+from torchvision import transforms
+from torchvision.transforms import Compose, Normalize, ToTensor
+cudnn.benchmark = True
 
-from vitcx.cam import get_feature_map
-from vitcx.causal_score import causal_score
-# import numpy as np
-# import cv2
-# import copy
-# from skimage.transform import resize
-# from sklearn.cluster import AgglomerativeClustering
-# from scipy.special import softmax
-# import torch
-# import torch.nn as nn
-# import torch.backends.cudnn as cudnn
-# from torchvision import transforms
-# from torchvision.transforms import Compose, Normalize, ToTensor
-# cudnn.benchmark = True
 
-print('DEBUG: Init file')
+def get_cos_similar_matrix(v1, v2):
+    num = torch.mm(v1,torch.transpose(v2, 0, 1)) 
+    denom = torch.linalg.norm(v1,  dim=1).reshape(-1, 1) * torch.linalg.norm(v2,  dim=1)
+    res = num / denom
+    res[torch.isnan(res)] = 0
+    return res
 
+def norm_matrix(act):
+    row_mins=torch.min(act,1).values[:, None]
+    row_maxs=torch.max(act,1).values[:, None] 
+    act=(act-row_mins)/(row_maxs-row_mins)
+    return act
+
+#-----------------------Function to Reshape the Extracted Feature Maps----------------------------------
+# Users may need to adjust the reshape_transform function for different ViT Models
+# For instance, in DEiT, the first two tokens are [CLS] and [Dist], should the patch tokens start from the third element, thus we shall have:
+# result = tensor[:, 2:, :].reshape(tensor.size(0),height, width, tensor.size(2))
 def reshape_function_vit(tensor, height=14, width=14):
     result = tensor[:, 1:, :].reshape(tensor.size(0),
                                       height, width, tensor.size(2))
     result = result.transpose(2, 3).transpose(1, 2)
     return result
+
+
+#--------------------------------Function to make the ViT-CX explanation-----------------------------
+'''
+1. model: ViT model to be explained;
+2. image: input image in the tensor form (shape: [1,#channels,width,height]);
+3. target_layer: the layer to extract feature maps  (e.g. model.blocks[-1].norm1);
+4. target_category: int (class to be explained), in default - the top_1 prediction class;
+5. distance_threshold: float between [0,1], distance threshold to make the clustering where  
+   feature maps with similarity<distance_threshold will be merged together, in default - 0.1; 
+6. reshape_function: function to reshape the extracted feature maps, in default - a reshape function for vanilla vit;
+7. gpu_batch: batch size the run the prediction for the masked images, in default - 50.
+'''
 
 def ViT_CX(model,image,target_layer,target_category=None,distance_threshold=0.1,reshape_function=reshape_function_vit,gpu_batch=50):
     image=image.cuda()
@@ -84,65 +112,4 @@ def ViT_CX(model,image,target_layer,target_category=None,distance_threshold=0.1,
 
     # return sal, mask_clustering_norm
     # print('[DEBUG]', target_category)
-    return target_category, sal
-
-
-print('DEBUG: vitcx imported successfully')
-
-from torchvision.models import VisionTransformer as VisionVIT
-from timm.models.vision_transformer import VisionTransformer as TimmVIT
-
-print('SUCCESS: ViT-CX loaded successfully')
-
-class ViTCXWrapper:
-    """
-    Wrapper for ViT-CX: Wrap ViT-CX method to allow similar usage in scripts
-    """
-    def __init__(self, model, batch_size=2, **kwargs):
-        """
-        initialisation of the class
-        :param model: model used for the maps computations
-        """
-        print('DEBUG: init')
-        self.model = model
-        self.batch_size = batch_size
-        
-
-    def exec_method(self, x, class_idx=None):
-        """
-        Call the saliency method
-        :param x: input image tensor
-        :param class_idx: index of the class to explain
-        :return: a saliency map in shape (input_size, input_size)
-        """
-        with torch.enable_grad():
-            model = copy.deepcopy(self.model)
-            if isinstance(model, VisionVIT):
-                target_layer = model.encoder.layers[-1].ln_1
-            elif isinstance(model, TimmVIT):
-                target_layer = model.blocks[-1].norm1
-            else:
-                raise NotImplementedError("Model not supported")
-        
-            prediction, saliency = ViT_CX(model,
-                                           x,
-                                           target_layer,
-                                           class_idx,
-                                           reshape_function=reshape_function_vit,
-                                           gpu_batch=self.batch_size,
-                                           )
-                                    
-            saliency = torch.Tensor(saliency).detach()
-            del model
-            return prediction, saliency
-    def generate(self, x, target=None):
-        target = target.to('cpu')
-        with torch.enable_grad():
-            prediction, saliency_map = self.exec_method(x, class_idx=target)
-            return prediction, saliency_map.detach().cpu()
-
-    def __call__(self, x, class_idx=None):
-      # class_idx = class_idx.to('cpu')
-      with torch.enable_grad():
-          prediction, saliency_map = self.exec_method(x, class_idx=class_idx)
-          return saliency_map.detach().cpu()
+    return sal
