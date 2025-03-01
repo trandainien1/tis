@@ -2,7 +2,26 @@
 import torch
 import sys
 import copy
-
+import os
+import sys
+# Get the current working directory
+cwd = os.getcwd()
+sys.path.insert(1, str(cwd)+'\\ViT_CX')
+sys.path.insert(1, str(cwd)+'\\ViT_CX\\py_cam')
+from .cam import get_feature_map
+from .causal_score import causal_score
+import numpy as np
+import cv2
+import copy
+from skimage.transform import resize
+from sklearn.cluster import AgglomerativeClustering
+from scipy.special import softmax
+import torch
+import torch.nn as nn
+import torch.backends.cudnn as cudnn
+from torchvision import transforms
+from torchvision.transforms import Compose, Normalize, ToTensor
+cudnn.benchmark = True
 
 # sys.path.append("comparison_methods/ViTCX/ViT_CX")
 print('DEBUG: Init file')
