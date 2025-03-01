@@ -164,7 +164,7 @@ def load_pretrained(model, cfg=None, num_classes=1000, in_chans=3, filter_fn=Non
         del state_dict[classifier_name + '.weight']
         del state_dict[classifier_name + '.bias']
         strict = False
-
+    print('[DEBUG]: finish load pretrained')
     model.load_state_dict(state_dict, strict=strict)
 
 
