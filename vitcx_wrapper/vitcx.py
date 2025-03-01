@@ -7,7 +7,71 @@ import copy
 # sys.path.append("comparison_methods/ViTCX/ViT_CX")
 print('DEBUG: Init file')
 
-from vitcx.ViT_CX import ViT_CX, reshape_function_vit
+def reshape_function_vit(tensor, height=14, width=14):
+    result = tensor[:, 1:, :].reshape(tensor.size(0),
+                                      height, width, tensor.size(2))
+    result = result.transpose(2, 3).transpose(1, 2)
+    return result
+
+def ViT_CX(model,image,target_layer,target_category=None,distance_threshold=0.1,reshape_function=reshape_function_vit,gpu_batch=50):
+    image=image.cuda()
+    model_softmax=copy.deepcopy(model)
+    model=model.eval()
+    model=model.cuda()
+    model_softmax = nn.Sequential(model_softmax, nn.Softmax(dim=1))
+    model_softmax = model_softmax.eval()
+    model_softmax = model_softmax.cuda()
+    for p in model_softmax.parameters():
+        p.requires_grad = False
+    y_hat = model_softmax(image)
+    y_hat_1=y_hat.detach().cpu().numpy()[0]
+    if target_category==None:
+        top_1=np.argsort(y_hat_1)[::-1][0]
+        target_category = top_1
+    class_p=y_hat_1[target_category]
+    input_size=(image.shape[2],image.shape[3])
+    transform_fp = transforms.Compose([transforms.Resize(input_size)])
+
+
+    # Extract the ViT feature maps 
+    GetFeatureMap= get_feature_map(model=model,target_layers=[target_layer],use_cuda=True,reshape_transform=reshape_function)
+    _ = GetFeatureMap(input_tensor=image,target_category=int(target_category))
+    feature_map=GetFeatureMap.featuremap_and_grads.featuremaps[0][0].cuda()
+
+    # Reshape and normalize the ViT feature maps to get ViT masks
+    feature_map=transform_fp(feature_map)
+    mask=norm_matrix(torch.reshape(feature_map, (feature_map.shape[0],input_size[0]*input_size[1])))
+
+
+    # Compute the pairwise cosine similarity and distance of the ViT masks
+    similarity = get_cos_similar_matrix(mask,mask)
+    distance = 1 - similarity
+
+    # Apply the  AgglomerativeClustering with a given distance_threshold
+    cluster = AgglomerativeClustering(n_clusters = None, distance_threshold=distance_threshold,metric='precomputed', linkage='complete') 
+    cluster.fit(distance.cpu())
+    cluster_num=len(set(cluster.labels_))
+    # print('number of masks after the clustering:'+str(cluster_num))
+
+    # Use the sum of a clustering as a representation of the cluster
+    cluster_labels=cluster.labels_
+    cluster_labels_set=set(cluster_labels)
+    mask_clustering=torch.zeros((len(cluster_labels_set),input_size[0]*input_size[1])).cuda()
+    for i in range(len(mask)):
+        mask_clustering[cluster_labels[i]]+=mask[i]
+
+    # normalize the masks
+    mask_clustering_norm=norm_matrix(mask_clustering).reshape((len(cluster_labels_set),input_size[0],input_size[1]))
+    
+    # compute the causal impact score
+    compute_causal_score = causal_score(model_softmax, (input_size[0], input_size[1]),gpu_batch=gpu_batch)
+    sal = compute_causal_score(image,mask_clustering_norm, class_p)[target_category].cpu().numpy()
+
+    # return sal, mask_clustering_norm
+    # print('[DEBUG]', target_category)
+    return target_category, sal
+
+
 print('DEBUG: vitcx imported successfully')
 
 from torchvision.models import VisionTransformer as VisionVIT
