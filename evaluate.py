@@ -132,9 +132,7 @@ def main(cfg: DictConfig):
             saliency_map = saliency_maps[idx] # !Nien: subtract number of images here
             if cfg.method.name not in ['rollout']:
                 saliency_map = saliency_map.reshape((1, 1, *saliency_map.shape))
-            print('[DEBUG]: saliency map shape: ', saliency_map.shape)
-            print('[DEBUG]: image shape: ', image.shape)
-             
+            
             if saliency_map.shape != image.shape:
                 saliency_map = upsampling_fn(saliency_map)
 
