@@ -92,7 +92,7 @@ def load_pretrained(model, cfg=None, num_classes=1000, in_chans=3, filter_fn=Non
 #         return
 
 #     state_dict = model_zoo.load_url(cfg['url'], progress=False, map_location='cpu')
-   
+    print('[DEBUG]: cfg done')
     if dino:
         state_backbone = torch.load(cfg['url_backbone'], map_location='cpu')
         state_linear = torch.load(cfg['url_linear'], map_location='cpu')['state_dict']
