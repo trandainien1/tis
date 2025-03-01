@@ -92,5 +92,5 @@ class RolloutWrapper():
         :param class_idx: index of the class to explain
         :return: a saliency map in shape (input_size, input_size)
         """
-        saliency_map = torch.tensor(self.method(x))
+        _, saliency_map = torch.tensor(self.method(x))
         return saliency_map
