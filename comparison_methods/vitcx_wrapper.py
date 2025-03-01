@@ -1,4 +1,6 @@
+import os
 print('THIS FILE init')
+print('current path: ', os.getcwd())
 # Wrappers classes for comparison in benchmarks
 import torch
 import sys
