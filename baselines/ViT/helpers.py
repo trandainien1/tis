@@ -111,7 +111,7 @@ def load_pretrained(model, cfg=None, num_classes=1000, in_chans=3, filter_fn=Non
 #             if 'momentum_encoder.' in name:
 #                 name =i.split('momentum_encoder.')[1]
             state_dict[name] = state_dict.pop(i)
-
+    print('[DEBUG]: HERE')
     if filter_fn is not None:
         state_dict = filter_fn(state_dict)
     print('[DEBUG]: filter_fn done')
