@@ -114,6 +114,7 @@ def load_pretrained(model, cfg=None, num_classes=1000, in_chans=3, filter_fn=Non
 
     if filter_fn is not None:
         state_dict = filter_fn(state_dict)
+    print('[DEBUG]: filter_fn done')
 
     if in_chans == 1:
         conv1_name = cfg['first_conv']
@@ -153,6 +154,7 @@ def load_pretrained(model, cfg=None, num_classes=1000, in_chans=3, filter_fn=Non
             state_dict[conv1_name + '.weight'] = conv1_weight
 
     classifier_name = cfg['classifier']
+    print('[DEBUG]: inchans done')
     if num_classes == 1000 and cfg['num_classes'] == 1001:
         # special case for imagenet trained models with extra background class in pretrained weights
         classifier_weight = state_dict[classifier_name + '.weight']
