@@ -105,7 +105,7 @@ class BTHWrapper(BTWrapperCommon):
         :return: a saliency map in shape (input_size, input_size)
         """
         with torch.enable_grad():
-            saliency_map = self.method.generate_ours(x,
+            _, saliency_map = self.method.generate_ours(x,
                                                      index=class_idx,
                                                      start_layer=self.start_layer,
                                                      )
