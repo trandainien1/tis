@@ -90,7 +90,7 @@ class TAMWrapper:
         :return: a saliency map in shape (input_size, input_size)
         """
         with torch.enable_grad():
-            saliency_map = self.method.transition_attention_maps(x,
+            _, saliency_map = self.method.transition_attention_maps(x,
                                                                  index=class_idx,
                                                                  start_layer=self.start_layer,
                                                                  steps=self.steps,
