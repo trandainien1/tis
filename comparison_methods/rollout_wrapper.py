@@ -1,7 +1,7 @@
 import torch
 
 
-def rollout(attentions, discard_ratio, head_fusion, device='cpu'):
+def rollout(attentions, discard_ratio, head_fusion, device='cuda'):
     result = torch.eye(attentions[0].size(-1)).to(device)
     with torch.no_grad():
         for attention in attentions: 
@@ -92,5 +92,5 @@ class RolloutWrapper():
         :param class_idx: index of the class to explain
         :return: a saliency map in shape (input_size, input_size)
         """
-        saliency_map = torch.tensor(self.method(x.to('cuda')))
+        saliency_map = torch.tensor(self.method(x))
         return saliency_map
