@@ -1,3 +1,4 @@
+print('THIS FILE init')
 # Wrappers classes for comparison in benchmarks
 import torch
 import sys
