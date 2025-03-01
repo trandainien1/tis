@@ -5,8 +5,10 @@ import copy
 
 
 # sys.path.append("comparison_methods/ViTCX/ViT_CX")
+print('DEBUG: Init file')
 
 from vitcx.ViT_CX import ViT_CX, reshape_function_vit
+print('DEBUG: vitcx imported successfully')
 
 from torchvision.models import VisionTransformer as VisionVIT
 from timm.models.vision_transformer import VisionTransformer as TimmVIT
