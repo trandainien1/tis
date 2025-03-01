@@ -130,8 +130,10 @@ def main(cfg: DictConfig):
         if cfg.metric.npz_only:
             # saliency_map = saliency_maps[idx - cfg.start_idx] # !Nien: subtract number of images here
             saliency_map = saliency_maps[idx] # !Nien: subtract number of images here
-            print('[DEBUG]: saliency map shape: ', saliency_map.shape)
             saliency_map = saliency_map.reshape((1, 1, *saliency_map.shape))
+            print('[DEBUG]: saliency map shape: ', saliency_map.shape)
+            print('[DEBUG]: image shape: ', image.shape)
+             
             if saliency_map.shape != image.shape:
                 saliency_map = upsampling_fn(saliency_map)
 
