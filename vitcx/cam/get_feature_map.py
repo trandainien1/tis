@@ -1,6 +1,5 @@
 import numpy as np
-from .base_cam import BaseCAM
-
+from vitcx.cam.base_cam import BaseCAM
 
 class get_feature_map(BaseCAM):
     def __init__(self, model, target_layers, use_cuda=False,
