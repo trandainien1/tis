@@ -22,6 +22,7 @@ class ViTCXWrapper:
         initialisation of the class
         :param model: model used for the maps computations
         """
+        print('DEBUG: init')
         self.model = model
         self.batch_size = batch_size
         
