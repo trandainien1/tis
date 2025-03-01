@@ -4,10 +4,7 @@ import sys
 import copy
 import os
 import sys
-# Get the current working directory
-cwd = os.getcwd()
-sys.path.insert(1, str(cwd)+'\\ViT_CX')
-sys.path.insert(1, str(cwd)+'\\ViT_CX\\py_cam')
+
 from vitcx.cam import get_feature_map
 from vitcx.causal_score import causal_score
 import numpy as np
