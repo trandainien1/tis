@@ -58,3 +58,8 @@ class ViTCXWrapper:
         with torch.enable_grad():
             prediction, saliency_map = self.exec_method(x, class_idx=target)
             return prediction, saliency_map.detach().cpu()
+
+    def __call__(self, x, class_idx=None):
+      _, sal = self.generate(x, target=class_idx)
+      return sal
+        
