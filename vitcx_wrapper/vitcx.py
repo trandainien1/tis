@@ -126,7 +126,7 @@ class ViTCXWrapper:
             prediction, saliency_map = self.exec_method(x, class_idx=target)
             return prediction, saliency_map.detach().cpu()
 
-    def __call__(self, x, class_idx=None):
+    def __call__(self, x, target=None):
       target = target.to('cpu')
       with torch.enable_grad():
           prediction, saliency_map = self.exec_method(x, class_idx=target)
