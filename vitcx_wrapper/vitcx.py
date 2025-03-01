@@ -5,20 +5,20 @@ import copy
 import os
 import sys
 
-# from vitcx.cam import get_feature_map
-# from vitcx.causal_score import causal_score
-# import numpy as np
-# import cv2
-# import copy
-# # from skimage.transform import resize
+from vitcx.cam import get_feature_map
+from vitcx.causal_score import causal_score
+import numpy as np
+import cv2
+import copy
+# from skimage.transform import resize
 # from sklearn.cluster import AgglomerativeClustering
 # from scipy.special import softmax
-# import torch
-# import torch.nn as nn
-# import torch.backends.cudnn as cudnn
-# from torchvision import transforms
-# from torchvision.transforms import Compose, Normalize, ToTensor
-# cudnn.benchmark = True
+import torch
+import torch.nn as nn
+import torch.backends.cudnn as cudnn
+from torchvision import transforms
+from torchvision.transforms import Compose, Normalize, ToTensor
+cudnn.benchmark = True
 
 print('DEBUG: Init file')
 
