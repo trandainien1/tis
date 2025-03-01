@@ -102,8 +102,10 @@ def load_pretrained(model, cfg=None, num_classes=1000, in_chans=3, filter_fn=Non
     else:
         state_dict = torch.load(cfg['url'], map_location='cpu')
         
+    print('[DEBUG]: MAE')
     if mae:
         state_dict=state_dict['model']
+    print('[DEBUG]: MOCO')
     if moco:
         state_dict=state_dict['state_dict']
         for i in list(state_dict.keys()):
