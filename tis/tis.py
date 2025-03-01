@@ -8,6 +8,7 @@ from fast_pytorch_kmeans import KMeans
 from tqdm import tqdm
 
 import math
+print('DEBUG: import TIS successfully')
 
 
 class TIS:
