@@ -4,9 +4,9 @@ import sys
 
 sys.path.append("comparison_methods/Transition_Attention_Maps")
 
-from baselines.ViT.ViT_new import VisionTransformer, _conv_filter, _cfg
-from baselines.ViT.helpers import load_pretrained
-from baselines.ViT.interpret_methods import InterpretTransformer
+from tam.baselines.ViT.ViT_new import VisionTransformer, _conv_filter, _cfg
+from tam.baselines.ViT.helpers import load_pretrained
+from tam.baselines.ViT.interpret_methods import InterpretTransformer
 
 from timm.models.vision_transformer import default_cfgs as vit_cfgs
 from timm.models.deit import default_cfgs as deit_cfgs
@@ -17,7 +17,6 @@ Models: The TAM method uses modified models.
 We changed the model creation functions to use timm weights as defined in the hydra configuration
 instead of fixed weights defined by the authors
 """
-
 
 def vit_base_patch16_224(pretrained=False, model_name="vit_base_patch16_224", pretrained_cfg=None, **kwargs):
     model = VisionTransformer(
