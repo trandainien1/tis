@@ -21,16 +21,19 @@ instead of fixed weights defined by the authors
 
 print('[DEBUG1]')
 def vit_base_patch16_224(pretrained=False, model_name="vit_base_patch16_224", pretrained_cfg=None, **kwargs):
+    print('[DEBUG]: vit base func')
     model = VisionTransformer(
         patch_size=16, embed_dim=768, depth=12, num_heads=12, mlp_ratio=4, qkv_bias=True, **kwargs)
     cfg = _cfg(
         url=vit_cfgs[model_name].cfgs[pretrained_cfg].url,
         mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5),
     )
+    print('[DEBUG]: define model')
     model.default_cfg = cfg
     if pretrained:
         load_pretrained(
             model, num_classes=model.num_classes, in_chans=kwargs.get('in_chans', 3), filter_fn=_conv_filter)
+    print('[DEBUG]: pretrained')
     return model
 
 
