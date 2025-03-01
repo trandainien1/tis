@@ -101,7 +101,7 @@ def load_pretrained(model, cfg=None, num_classes=1000, in_chans=3, filter_fn=Non
         state_dict['head.bias'] = state_linear['module.linear.bias']
     else:
         print('[DEBUG]: HERE')
-
+        print('[DEBUG]: config', cfg)
         state_dict = torch.load(cfg['url'], map_location='cpu')
         
     print('[DEBUG]: MAE')
