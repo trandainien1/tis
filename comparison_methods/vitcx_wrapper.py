@@ -7,7 +7,7 @@ import copy
 
 sys.path.append("comparison_methods/ViTCX/ViT_CX")
 
-from ViT_CX.ViT_CX import ViT_CX, reshape_function_vit
+from comparison_methods.ViTCX.ViT_CX import ViT_CX, reshape_function_vit
 
 from torchvision.models import VisionTransformer as VisionVIT
 from timm.models.vision_transformer import VisionTransformer as TimmVIT
