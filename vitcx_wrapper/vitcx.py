@@ -10,7 +10,7 @@ from vitcx.causal_score import causal_score
 import numpy as np
 import cv2
 import copy
-from skimage.transform import resize
+# from skimage.transform import resize
 from sklearn.cluster import AgglomerativeClustering
 from scipy.special import softmax
 import torch
@@ -20,7 +20,6 @@ from torchvision import transforms
 from torchvision.transforms import Compose, Normalize, ToTensor
 cudnn.benchmark = True
 
-# sys.path.append("comparison_methods/ViTCX/ViT_CX")
 print('DEBUG: Init file')
 
 def reshape_function_vit(tensor, height=14, width=14):
