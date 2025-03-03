@@ -137,7 +137,7 @@ def main(cfg: DictConfig):
             # saliency_map = saliency_maps[idx - cfg.start_idx] # !Nien: subtract number of images here
             if cfg.method.name == 'vitcx':
                 # Compute current saliency ma
-                saliency_map = method(image.unsqueeze(0).cuda(), class_idx=class_idx).detach().cpu()
+                saliency_map = method(image, class_idx=class_idx).detach().cpu()
             else:
                 saliency_map = saliency_maps[idx] # !Nien: subtract number of images here
             if cfg.method.name not in ['rollout']:
