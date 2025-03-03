@@ -69,34 +69,61 @@ def main(cfg: DictConfig):
     print("Loading dataset", end="\n\n")
     dataset = instantiate(cfg.dataset)
 
-    if cfg.metric.npz_only:
-        # Get saliencies from npz
+    # create saliency for vit cx
+    if cfg.method.name == 'vitcx':
+        # Keep saliency maps in a list
+        saliency_maps_list = []
 
-        # if cfg.start_idx != -1:
-        #     cfg.input_npz = cfg.input_npz + '_' + str(cfg.start_idx) + '_' + str(cfg.end_idx) + '.npz' 
-        # else:
-        cfg.input_npz = cfg.input_npz + '.npz' 
+        # num_img = 0
+        # Loop over the dataset to generate the saliency maps
+        for image, class_idx in tqdm(dataset, desc="Computing saliency maps"):
+            # if num_img > cfg.end_idx:
+            #     break
+            image = image.unsqueeze(0).cuda()
 
-        print("Loading saliency maps from", cfg.input_npz, end="\n\n")
-        saliency_maps = torch.tensor(np.load(cfg.input_npz)['arr_0'])
+            if cfg.no_target:
+                class_idx = None
 
-        # Get metric
-        metric = instantiate(cfg.metric.init, model)
+            # Compute current saliency ma
+            cur_map = method(image, class_idx=class_idx).detach().cpu()
+            print('DEBUG', cur_map.shape)
 
-        # Set resize transformation for the saliency maps if upsampling is required
-        upsampling_fn = Resize(dataset[0][0].shape[-2:])
-        # print(len(dataset), len(saliency_maps))
+            # Add the current map to the list of saliency maps
+            saliency_maps_list.append(cur_map)
 
-        # assert len(dataset) == len(
-        #     saliency_maps), "The saliency maps and the dataset don't have the same number of items"
+            # num_img += 1
 
+
+        # Stack into a single tensor
+        saliency_maps = torch.stack(saliency_maps_list)
     else:
-        # Get method
-        print("Initializing saliency method:", cfg.method.name, end="\n\n")
-        method = instantiate(cfg.method.init, model)
+        if cfg.metric.npz_only:
+            # Get saliencies from npz
 
-        # Get metric
-        metric = instantiate(cfg.metric.init, model, method)
+            # if cfg.start_idx != -1:
+            #     cfg.input_npz = cfg.input_npz + '_' + str(cfg.start_idx) + '_' + str(cfg.end_idx) + '.npz' 
+            # else:
+            cfg.input_npz = cfg.input_npz + '.npz' 
+
+            print("Loading saliency maps from", cfg.input_npz, end="\n\n")
+            saliency_maps = torch.tensor(np.load(cfg.input_npz)['arr_0'])
+
+            # Get metric
+            metric = instantiate(cfg.metric.init, model)
+
+            # Set resize transformation for the saliency maps if upsampling is required
+            upsampling_fn = Resize(dataset[0][0].shape[-2:])
+            # print(len(dataset), len(saliency_maps))
+
+            # assert len(dataset) == len(
+            #     saliency_maps), "The saliency maps and the dataset don't have the same number of items"
+
+    # Get method
+    print("Initializing saliency method:", cfg.method.name, end="\n\n")
+    method = instantiate(cfg.method.init, model)
+
+    # Get metric
+    metric = instantiate(cfg.metric.init, model, method)
 
     metric_scores = []
 

@@ -84,7 +84,7 @@ def ViT_CX(model,image,target_layer,target_category=None,distance_threshold=0.1,
     # Reshape and normalize the ViT feature maps to get ViT masks
     feature_map=transform_fp(feature_map)
     mask=norm_matrix(torch.reshape(feature_map, (feature_map.shape[0],input_size[0]*input_size[1])))
-    print('[DEBUG] Mask shape', mask.shape)
+
 
     # Compute the pairwise cosine similarity and distance of the ViT masks
     similarity = get_cos_similar_matrix(mask,mask)
@@ -104,10 +104,8 @@ def ViT_CX(model,image,target_layer,target_category=None,distance_threshold=0.1,
         mask_clustering[cluster_labels[i]]+=mask[i]
 
     # normalize the masks
-    mask_clustering_norm=norm_matrix(mask_clustering)
-    print('[DEBUG BEFORE RESHAPE]', mask_clustering_norm.shape)
-    mask_clustering_norm = mask_clustering_norm.reshape((len(cluster_labels_set),input_size[0],input_size[1]))
-    print('[DEBUG AFTER RESHAPE]', mask_clustering_norm.shape)
+    mask_clustering_norm=norm_matrix(mask_clustering).reshape((len(cluster_labels_set),input_size[0],input_size[1]))
+    
     # compute the causal impact score
     compute_causal_score = causal_score(model_softmax, (input_size[0], input_size[1]),gpu_batch=gpu_batch)
     sal = compute_causal_score(image,mask_clustering_norm, class_p)[target_category].cpu().numpy()
