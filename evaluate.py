@@ -65,10 +65,7 @@ def main(cfg: DictConfig):
     model.load_state_dict(state_dict, strict=True)
     model = model.eval()
 
-    # Get dataset
-    print("Loading dataset", end="\n\n")
-    dataset = instantiate(cfg.dataset)
-
+    
     # create saliency for vit cx
     if cfg.method.name == 'vitcx':
         # Get model
@@ -82,6 +79,10 @@ def main(cfg: DictConfig):
 
         # Keep saliency maps in a list
         saliency_maps_list = []
+
+        # Get dataset
+        print("Loading dataset", end="\n\n")
+        dataset = instantiate(cfg.dataset1)
 
         # num_img = 0
         # Loop over the dataset to generate the saliency maps
@@ -106,7 +107,13 @@ def main(cfg: DictConfig):
 
         # Stack into a single tensor
         saliency_maps = torch.stack(saliency_maps_list)
+
+        # Get dataset
+        print("Loading dataset", end="\n\n")
+        dataset = instantiate(cfg.dataset)
+
     else:
+        
          # Get method
         print("Initializing saliency method:", cfg.method.name, end="\n\n")
         method = instantiate(cfg.method.init, model)
