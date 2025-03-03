@@ -112,4 +112,4 @@ def ViT_CX(model,image,target_layer,target_category=None,distance_threshold=0.1,
 
     # return sal, mask_clustering_norm
     # print('[DEBUG]', target_category)
-    return target_category, sal
+    return sal
