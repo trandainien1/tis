@@ -86,6 +86,9 @@ def main(cfg: DictConfig):
             print("Loading model for vitcx:", cfg.model.name, end="\n\n")
             model = instantiate(cfg.model.init).cuda()
             model.eval()
+            # Get method
+            print("Initializing saliency method:", cfg.method.name, end="\n\n")
+            method = instantiate(cfg.method.init, model)
         # Get metric
         metric = instantiate(cfg.metric.init, model)
 
