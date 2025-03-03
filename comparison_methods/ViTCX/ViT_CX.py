@@ -110,4 +110,4 @@ def ViT_CX(model,image,target_layer,target_category=None,distance_threshold=0.1,
     compute_causal_score = causal_score(model_softmax, (input_size[0], input_size[1]),gpu_batch=gpu_batch)
     sal = compute_causal_score(image,mask_clustering_norm, class_p)[target_category].cpu().numpy()
 
-    return sal, mask_clustering_norm
+    return sal
