@@ -72,7 +72,8 @@ def ViT_CX(model,image,target_layer,target_category=None,distance_threshold=0.1,
         top_1=np.argsort(y_hat_1)[::-1][0]
         target_category = top_1
     class_p=y_hat_1[target_category]
-    input_size=(image.shape[2],image.shape[3])
+    # input_size=(image.shape[2],image.shape[3])
+    input_size=(14, 14)
     transform_fp = transforms.Compose([transforms.Resize(input_size)])
 
 
@@ -85,7 +86,6 @@ def ViT_CX(model,image,target_layer,target_category=None,distance_threshold=0.1,
     feature_map=transform_fp(feature_map)
     mask=norm_matrix(torch.reshape(feature_map, (feature_map.shape[0],input_size[0]*input_size[1])))
     print('[DEBUG] Mask shape', mask.shape)
-
 
     # Compute the pairwise cosine similarity and distance of the ViT masks
     similarity = get_cos_similar_matrix(mask,mask)
