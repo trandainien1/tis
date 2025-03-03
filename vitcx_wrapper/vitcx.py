@@ -41,7 +41,7 @@ class ViTCXWrapper:
                 target_layer = model.blocks[-1].norm1
             else:
                 raise NotImplementedError("Model not supported")
-        
+            print('[DEBUG] class idx', class_idx)
             saliency = ViT_CX(model,
                                            x,
                                            target_layer,
