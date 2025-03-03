@@ -115,10 +115,10 @@ def main(cfg: DictConfig):
         end_idx = cfg.end_idx
 
     # Loop over the dataset to generate the saliency maps
-    print(end_idx-start_idx)
+    print(len(dataset))
     for idx in tqdm(range(start_idx, end_idx+1),
                     desc="Computing metric",
-                    total=(end_idx - start_idx)):
+                    total=(end_idx - start_idx + 1)):
         (image, target, class_idx) = dataset[idx]
         image = image.unsqueeze(0).cuda()
         if cfg.no_target:
