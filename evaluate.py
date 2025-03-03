@@ -82,7 +82,10 @@ def main(cfg: DictConfig):
             cfg.input_npz = cfg.input_npz + '.npz' 
             print("Loading saliency maps from", cfg.input_npz, end="\n\n")
             saliency_maps = torch.tensor(np.load(cfg.input_npz)['arr_0'])
-
+        else:
+            print("Loading model for vitcx:", cfg.model.name, end="\n\n")
+            model = instantiate(cfg.model.init).cuda()
+            model.eval()
         # Get metric
         metric = instantiate(cfg.metric.init, model)
 
