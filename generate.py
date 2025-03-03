@@ -168,6 +168,7 @@ def main(cfg: DictConfig):
         model = ViT_Ours.create_model(MODEL, pretrained=True, num_classes=class_num).to('cuda')
         model.load_state_dict(state_dict, strict=True)
         model = model.eval()
+
     else:
         model = instantiate(cfg.model.init).cuda()
         model.eval()
@@ -201,6 +202,8 @@ def main(cfg: DictConfig):
 
         # Add the current map to the list of saliency maps
         saliency_maps_list.append(cur_map)
+
+        break
         # num_img += 1
 
 
