@@ -75,6 +75,11 @@ def main(cfg: DictConfig):
 
     # create saliency for vit cx
     if cfg.method.name == 'vitcx':
+        # Get model
+        print("Loading model:", cfg.model.name, end="\n\n")
+        model = instantiate(cfg.model.init).cuda()
+        model.eval()
+
         # Keep saliency maps in a list
         saliency_maps_list = []
 
