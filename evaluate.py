@@ -92,9 +92,12 @@ def main(cfg: DictConfig):
 
         # assert len(dataset) == len(
         #     saliency_maps), "The saliency maps and the dataset don't have the same number of items"
-
-    # Get metric
-    metric = instantiate(cfg.metric.init, model, method)
+    else:
+         # Get method
+        print("Initializing saliency method:", cfg.method.name, end="\n\n")
+        method = instantiate(cfg.method.init, model)
+        # Get metric
+        metric = instantiate(cfg.metric.init, model, method)
 
     metric_scores = []
 
