@@ -9,7 +9,8 @@ class causal_score(nn.Module):
     def __init__(self, model, input_size, gpu_batch=100):
         super(causal_score, self).__init__()
         self.model = model
-        self.input_size = input_size
+        # self.input_size = input_size
+        self.input_size = (14, 14)
         self.gpu_batch = gpu_batch
 
 
