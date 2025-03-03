@@ -72,8 +72,7 @@ def ViT_CX(model,image,target_layer,target_category=None,distance_threshold=0.1,
         top_1=np.argsort(y_hat_1)[::-1][0]
         target_category = top_1
     class_p=y_hat_1[target_category]
-    # input_size=(image.shape[2],image.shape[3])
-    input_size=(14, 14)
+    input_size=(image.shape[2],image.shape[3])
     transform_fp = transforms.Compose([transforms.Resize(input_size)])
 
 

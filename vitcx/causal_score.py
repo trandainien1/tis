@@ -18,8 +18,10 @@ class causal_score(nn.Module):
         self.masks =  masks_input.reshape(-1, 1, *self.input_size)
         self.N = self.masks.shape[0]
         N = self.N 
-        H=self.input_size[0]
-        W=self.input_size[1]
+        # H=self.input_size[0]
+        # W=self.input_size[1]
+        H = 14
+        W = 14
         masks=self.masks
         # print(f'Mask shape in forward function: {masks.shape}')
         # Generate the inverse of masks, i.e., 1-M_i
