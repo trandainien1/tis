@@ -69,16 +69,16 @@ def main(cfg: DictConfig):
     print("Loading dataset", end="\n\n")
     dataset = instantiate(cfg.dataset)
 
-    # Get method
-    print("Initializing saliency method:", cfg.method.name, end="\n\n")
-    method = instantiate(cfg.method.init, model)
-
     # create saliency for vit cx
     if cfg.method.name == 'vitcx':
         # Get model
         print("Loading model:", cfg.model.name, end="\n\n")
         model = instantiate(cfg.model.init).cuda()
         model.eval()
+
+        # Get method
+        print("Initializing saliency method:", cfg.method.name, end="\n\n")
+        method = instantiate(cfg.method.init, model)
 
         # Keep saliency maps in a list
         saliency_maps_list = []
@@ -106,6 +106,10 @@ def main(cfg: DictConfig):
         # Stack into a single tensor
         saliency_maps = torch.stack(saliency_maps_list)
     else:
+         # Get method
+        print("Initializing saliency method:", cfg.method.name, end="\n\n")
+        method = instantiate(cfg.method.init, model)
+        
         if cfg.metric.npz_only:
             # Get saliencies from npz
 
