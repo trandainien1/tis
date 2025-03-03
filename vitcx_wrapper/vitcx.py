@@ -43,12 +43,12 @@ class ViTCXWrapper:
                 raise NotImplementedError("Model not supported")
            
             saliency = ViT_CX(model,
-                                           x,
-                                           target_layer,
-                                           class_idx,
-                                           reshape_function=reshape_function_vit,
-                                           gpu_batch=self.batch_size,
-                                           )
+                                x,
+                                target_layer,
+                                class_idx,
+                                reshape_function=reshape_function_vit,
+                                gpu_batch=self.batch_size,
+                            )
                                     
             saliency = torch.Tensor(saliency).detach()
             del model
