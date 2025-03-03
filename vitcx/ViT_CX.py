@@ -105,9 +105,9 @@ def ViT_CX(model,image,target_layer,target_category=None,distance_threshold=0.1,
 
     # normalize the masks
     mask_clustering_norm=norm_matrix(mask_clustering)
-    print('[DEBUG BEFORE RESHAPE]', mask_clustering_norm)
+    print('[DEBUG BEFORE RESHAPE]', mask_clustering_norm.shape)
     mask_clustering_norm = mask_clustering_norm.reshape((len(cluster_labels_set),input_size[0],input_size[1]))
-    print('[DEBUG AFTER RESHAPE]', mask_clustering_norm)
+    print('[DEBUG AFTER RESHAPE]', mask_clustering_norm.shape)
     # compute the causal impact score
     compute_causal_score = causal_score(model_softmax, (input_size[0], input_size[1]),gpu_batch=gpu_batch)
     sal = compute_causal_score(image,mask_clustering_norm, class_p)[target_category].cpu().numpy()
