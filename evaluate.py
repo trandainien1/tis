@@ -69,6 +69,10 @@ def main(cfg: DictConfig):
     print("Loading dataset", end="\n\n")
     dataset = instantiate(cfg.dataset)
 
+    # Get method
+    print("Initializing saliency method:", cfg.method.name, end="\n\n")
+    method = instantiate(cfg.method.init, model)
+
     # create saliency for vit cx
     if cfg.method.name == 'vitcx':
         # Keep saliency maps in a list
@@ -117,10 +121,6 @@ def main(cfg: DictConfig):
 
             # assert len(dataset) == len(
             #     saliency_maps), "The saliency maps and the dataset don't have the same number of items"
-
-    # Get method
-    print("Initializing saliency method:", cfg.method.name, end="\n\n")
-    method = instantiate(cfg.method.init, model)
 
     # Get metric
     metric = instantiate(cfg.metric.init, model, method)
