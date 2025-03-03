@@ -84,6 +84,7 @@ def ViT_CX(model,image,target_layer,target_category=None,distance_threshold=0.1,
     # Reshape and normalize the ViT feature maps to get ViT masks
     feature_map=transform_fp(feature_map)
     mask=norm_matrix(torch.reshape(feature_map, (feature_map.shape[0],input_size[0]*input_size[1])))
+    print('[DEBUG] Mask shape', mask.shape)
 
 
     # Compute the pairwise cosine similarity and distance of the ViT masks
