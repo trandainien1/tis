@@ -65,77 +65,33 @@ def main(cfg: DictConfig):
     model.load_state_dict(state_dict, strict=True)
     model = model.eval()
 
+    print("Loading dataset", end="\n\n")
+    dataset = instantiate(cfg.dataset)
     
-    # create saliency for vit cx
-    if cfg.method.name == 'vitcx':
-        # Get model
-        print("Loading model:", cfg.model.name, end="\n\n")
-        model = instantiate(cfg.model.init).cuda()
-        model.eval()
+    # Get method
+    print("Initializing saliency method:", cfg.method.name, end="\n\n")
+    method = instantiate(cfg.method.init, model)
 
-        # Get method
-        print("Initializing saliency method:", cfg.method.name, end="\n\n")
-        method = instantiate(cfg.method.init, model)
+    if cfg.metric.npz_only:
+        # Get saliencies from npz
 
-        # Keep saliency maps in a list
-        saliency_maps_list = []
-
-        # Get dataset
-        print("Loading dataset", end="\n\n")
-        dataset = instantiate(cfg.dataset1)
-
-        # num_img = 0
-        # Loop over the dataset to generate the saliency maps
-        for image, class_idx in tqdm(dataset, desc="Computing saliency maps"):
-            # if num_img > cfg.end_idx:
-            #     break
-            image = image.unsqueeze(0).cuda()
-
-            if cfg.no_target:
-                class_idx = None
-
-            # Compute current saliency ma
-            cur_map = method(image, class_idx=class_idx).detach().cpu()
-
-            # Add the current map to the list of saliency maps
-            saliency_maps_list.append(cur_map)
-
-            # num_img += 1
-
-
-        # Stack into a single tensor
-        saliency_maps = torch.stack(saliency_maps_list)
-
-        # Get dataset
-        print("Loading dataset", end="\n\n")
-        dataset = instantiate(cfg.dataset)
-
-    else:
-        
-         # Get method
-        print("Initializing saliency method:", cfg.method.name, end="\n\n")
-        method = instantiate(cfg.method.init, model)
-
-        if cfg.metric.npz_only:
-            # Get saliencies from npz
-
-            # if cfg.start_idx != -1:
-            #     cfg.input_npz = cfg.input_npz + '_' + str(cfg.start_idx) + '_' + str(cfg.end_idx) + '.npz' 
-            # else:
+        # if cfg.start_idx != -1:
+        #     cfg.input_npz = cfg.input_npz + '_' + str(cfg.start_idx) + '_' + str(cfg.end_idx) + '.npz' 
+        # else:
+        if cfg.method.name != 'vitcx':
             cfg.input_npz = cfg.input_npz + '.npz' 
-
             print("Loading saliency maps from", cfg.input_npz, end="\n\n")
             saliency_maps = torch.tensor(np.load(cfg.input_npz)['arr_0'])
 
-            # Get metric
-            metric = instantiate(cfg.metric.init, model)
+        # Get metric
+        metric = instantiate(cfg.metric.init, model)
 
-            # Set resize transformation for the saliency maps if upsampling is required
-            upsampling_fn = Resize(dataset[0][0].shape[-2:])
-            # print(len(dataset), len(saliency_maps))
+        # Set resize transformation for the saliency maps if upsampling is required
+        upsampling_fn = Resize(dataset[0][0].shape[-2:])
+        # print(len(dataset), len(saliency_maps))
 
-            # assert len(dataset) == len(
-            #     saliency_maps), "The saliency maps and the dataset don't have the same number of items"
+        # assert len(dataset) == len(
+        #     saliency_maps), "The saliency maps and the dataset don't have the same number of items"
 
     # Get metric
     metric = instantiate(cfg.metric.init, model, method)
@@ -154,7 +110,7 @@ def main(cfg: DictConfig):
     for idx in tqdm(range(start_idx, end_idx+1),
                     desc="Computing metric",
                     total=(end_idx - start_idx)):
-        (image, target) = dataset[idx]
+        (image, target, class_idx) = dataset[idx]
         image = image.unsqueeze(0).cuda()
         if cfg.no_target:
             target = torch.argmax(model(image)).item()
@@ -168,10 +124,13 @@ def main(cfg: DictConfig):
 
         # print("Numbers saved in JSON format.")
         # -----------------------------------------
-
         if cfg.metric.npz_only:
             # saliency_map = saliency_maps[idx - cfg.start_idx] # !Nien: subtract number of images here
-            saliency_map = saliency_maps[idx] # !Nien: subtract number of images here
+            if cfg.method.name == 'vitcx':
+                # Compute current saliency ma
+                saliency_map = method(image.unsqueeze(0).cuda(), class_idx=class_idx).detach().cpu()
+            else:
+                saliency_map = saliency_maps[idx] # !Nien: subtract number of images here
             if cfg.method.name not in ['rollout']:
                 saliency_map = saliency_map.reshape((1, 1, *saliency_map.shape))
             

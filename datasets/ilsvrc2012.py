@@ -41,7 +41,7 @@ class BboxesImageNet(ImageNet):
 
             self.bboxes.append(bboxes)
 
-            self.imgs[idx] = (img, bboxes)
+            self.imgs[idx] = (img, bboxes, class_idx)
 
     def __getitem__(self, index: int) -> Tuple[Any, Any]:
         """
@@ -50,7 +50,7 @@ class BboxesImageNet(ImageNet):
         Returns:
             tuple: (sample, target) where target is class_index of the target class.
         """
-        path, bboxes = self.imgs[index]
+        path, bboxes, class_idx = self.imgs[index]
         img = self.loader(path)
 
         if isinstance(self.transform, BaseCompose) or isinstance(self.transform, BasicTransform):
@@ -66,7 +66,7 @@ class BboxesImageNet(ImageNet):
             if self.target_transform is not None:
                 bboxes = self.target_transform(bboxes)
 
-        return img, bboxes
+        return img, bboxes, class_idx 
 
     def get_bboxes(self, path, target_wnid):
         root = ET.parse(path).getroot()
