@@ -56,7 +56,7 @@ class ViTCXWrapper:
     def generate(self, x, target=None):
         # target = target.to('cpu')
         with torch.enable_grad():
-            _, saliency_map = self.exec_method(x, class_idx=target)
+            saliency_map = self.exec_method(x, class_idx=target)
             return saliency_map
 
     def __call__(self, x, class_idx=None):
