@@ -115,7 +115,7 @@ def main(cfg: DictConfig):
         end_idx = cfg.end_idx
 
     # Loop over the dataset to generate the saliency maps
-    print(len(dataset))
+    
     for idx in tqdm(range(start_idx, end_idx+1),
                     desc="Computing metric",
                     total=(end_idx - start_idx + 1)):
