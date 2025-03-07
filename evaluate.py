@@ -58,7 +58,7 @@ def main(cfg: DictConfig):
         print("Loading model:", cfg.model.name, end="\n\n")
         model = instantiate(cfg.model.init).cuda()
         model.eval()
-    if cfg.methods.name in ['agc', 'scoreagc']:
+    if cfg.method.name in ['agc', 'scoreagc']:
         MODEL = 'vit_base_patch16_224'
         class_num = 1000
         state_dict = model_zoo.load_url('https://github.com/rwightman/pytorch-image-models/releases/download/v0.1-vitjx/jx_vit_base_p16_224-80ecf9dd.pth', progress=True, map_location='cuda')
