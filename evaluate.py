@@ -54,16 +54,17 @@ def main(cfg: DictConfig):
     seed_everything(cfg.seed)
 
     # Get model
-    # print("Loading model:", cfg.model.name, end="\n\n")
-    # model = instantiate(cfg.model.init).cuda()
-    # model.eval()
-
-    MODEL = 'vit_base_patch16_224'
-    class_num = 1000
-    state_dict = model_zoo.load_url('https://github.com/rwightman/pytorch-image-models/releases/download/v0.1-vitjx/jx_vit_base_p16_224-80ecf9dd.pth', progress=True, map_location='cuda')
-    model = ViT_Ours.create_model(MODEL, pretrained=True, num_classes=class_num).to('cuda')
-    model.load_state_dict(state_dict, strict=True)
-    model = model.eval()
+    if cfg.methods.name == 'chefer1':
+        print("Loading model:", cfg.model.name, end="\n\n")
+        model = instantiate(cfg.model.init).cuda()
+        model.eval()
+    if cfg.methods.name in ['agc', 'scoreagc']:
+        MODEL = 'vit_base_patch16_224'
+        class_num = 1000
+        state_dict = model_zoo.load_url('https://github.com/rwightman/pytorch-image-models/releases/download/v0.1-vitjx/jx_vit_base_p16_224-80ecf9dd.pth', progress=True, map_location='cuda')
+        model = ViT_Ours.create_model(MODEL, pretrained=True, num_classes=class_num).to('cuda')
+        model.load_state_dict(state_dict, strict=True)
+        model = model.eval()
 
     print("Loading dataset", end="\n\n")
     dataset = instantiate(cfg.dataset)
@@ -74,10 +75,6 @@ def main(cfg: DictConfig):
 
     if cfg.metric.npz_only:
         # Get saliencies from npz
-
-        # if cfg.start_idx != -1:
-        #     cfg.input_npz = cfg.input_npz + '_' + str(cfg.start_idx) + '_' + str(cfg.end_idx) + '.npz' 
-        # else:
         if cfg.method.name != 'vitcx':
             cfg.input_npz = cfg.input_npz + '.npz' 
             print("Loading saliency maps from", cfg.input_npz, end="\n\n")
