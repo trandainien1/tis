@@ -1,5 +1,5 @@
 name: pointing_game
 npz_only: true
 init:
-  _target_: metrics.EnergyBasedPointingGame
+  _target_: metrics.PointingGame
   max_overlap: 0.5
