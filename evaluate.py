@@ -54,7 +54,7 @@ def main(cfg: DictConfig):
     seed_everything(cfg.seed)
 
     # Get model
-    if cfg.methods.name == 'chefer1':
+    if cfg.method.name == 'chefer1':
         print("Loading model:", cfg.model.name, end="\n\n")
         model = instantiate(cfg.model.init).cuda()
         model.eval()
