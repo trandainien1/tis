@@ -1,6 +1,5 @@
 import torch
 
-
 class EnergyBasedPointingGame:
     def __init__(self, model, max_overlap=0.5):
         self.model = model
