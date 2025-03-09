@@ -84,9 +84,10 @@ class TIS:
             # Generate the masks
             print('[DEBUG] encoder activations shape: ', encoder_activations.shape)
             raw_masks = self.generate_raw_masks(encoder_activations)
+            # * mask_indices_list: danh sách chứa index của các pixel = 1
             mask_list, mask_indices_list = self.generate_binary_masks(raw_masks)
-            print('[DEBUG] After generating binary masks, mask len:', len(mask_list))
-            print('[DEBUG] After generating binary masks, 1 mask shape: ', mask_list[0].shape)
+            print('[DEBUG] After generating binary masks, mask indices len:', len(mask_indices_list))
+            print('[DEBUG] After generating binary masks, 1 mask indices value: ', mask_indices_list[0].shape)
 
             # Generate the saliency map for image x and class_idx
             scores = self.generate_scores(x, class_idx, mask_indices_list)
