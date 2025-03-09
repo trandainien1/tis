@@ -91,6 +91,10 @@ class TIS:
             print('[DEBUG] After generating binary masks, second mask indices shape: ', mask_indices_list[1].shape)
             print('[DEBUG] After generating binary masks, third mask indices shape: ', mask_indices_list[2].shape)
 
+            print('[DEBUG] After generating binary masks, mask list len:', len(mask_list))
+            print('[DEBUG] After generating binary masks, first mask shape: ', mask_list[0].shape)
+            print('[DEBUG] After generating binary masks, second mask shape: ', mask_list[1].shape)
+            print('[DEBUG] After generating binary masks, third mask shape: ', mask_list[2].shape)
             # Generate the saliency map for image x and class_idx
             scores = self.generate_scores(x, class_idx, mask_indices_list)
 
