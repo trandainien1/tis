@@ -82,6 +82,7 @@ class TIS:
                     print("class idx", class_idx)
 
             # Generate the masks
+            print('[DEBUG] encoder activations shape: ', encoder_activations.shape)
             raw_masks = self.generate_raw_masks(encoder_activations)
             mask_list, mask_indices_list = self.generate_binary_masks(raw_masks)
 
@@ -150,6 +151,7 @@ class TIS:
 
         # Use kmeans centroids as basis for masks
         raw_masks = kmeans.centroids
+        print('[DEBUG] After Kmeans, mask shape: ', raw_masks.shape)
 
         return raw_masks
 
