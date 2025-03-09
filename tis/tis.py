@@ -86,7 +86,7 @@ class TIS:
             raw_masks = self.generate_raw_masks(encoder_activations)
             mask_list, mask_indices_list = self.generate_binary_masks(raw_masks)
             print('[DEBUG] After generating binary masks, mask len:', len(mask_list))
-            print('[DEBUG] After generating binary masks, 1 mask: ', mask_list[0])
+            print('[DEBUG] After generating binary masks, 1 mask shape: ', mask_list[0].shape)
 
             # Generate the saliency map for image x and class_idx
             scores = self.generate_scores(x, class_idx, mask_indices_list)
