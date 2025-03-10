@@ -338,6 +338,8 @@ class TIS:
         # Sum the masks weighted by their scores to produce a raw saliency
         scored_masks = scores * masks
         raw_saliency = scored_masks.sum(-1)
+        print('[DEBUG] scored masks - ', scored_masks.shape)
+        print('[DEBUG] raw_saliency - ', raw_saliency.shape)
 
         # Compute tokens coverage bias
         coverage_bias = masks.sum(-1)
