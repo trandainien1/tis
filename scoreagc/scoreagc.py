@@ -266,4 +266,4 @@ class ScoreAGC:
         # print(torch.cuda.memory_allocated()/1024**2)
         # print()
 
-        return predicted_class, saliency_map
+        return saliency_map
