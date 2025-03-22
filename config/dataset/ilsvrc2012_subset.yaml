@@ -1,6 +1,6 @@
 _target_: torch.utils.data.Subset
 defaults:
-  - indices: sub2000.yaml
+  - indices: sub5.yaml
 dataset:
   _target_: datasets.AlbumentationsImageNet
   root: "./inputs/imagenet"
