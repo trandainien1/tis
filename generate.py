@@ -212,6 +212,9 @@ def main(cfg: DictConfig):
 
     # Save as a npz
     output_npz = cfg.output_npz
+    if cfg.method.name == 'scoreagc':
+        output_npz = f'npz/{cfg.model.name}_{cfg.method.name}_{method.score_normalization_formula}_heatmap.npz'
+    
     if int(cfg.start_idx) == -1:
         cfg.output_npz = cfg.output_npz
     else:
