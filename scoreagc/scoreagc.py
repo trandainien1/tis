@@ -200,7 +200,7 @@ class ScoreAGC:
             elif self.score_normalization_formula == 'sigmoid':   
                 agc_scores = torch.sigmoid(agc_scores)
             elif self.score_normalization_formula == 'softmax':   
-                agc_scores = torch.softmax(agc_scores)
+                agc_scores = torch.softmax(agc_scores, dim=0)
             
             agc_scores += self.plus
 
