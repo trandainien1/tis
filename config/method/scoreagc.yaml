@@ -1,3 +1,4 @@
 name: scoreagc
 init:
   _target_: scoreagc.ScoreAGC
+  score_normalization_formula: minmax

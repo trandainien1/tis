@@ -10,7 +10,7 @@ import torch.nn.functional as F
 class ScoreAGC:
     def __init__(self, model, attention_matrix_layer = 'before_softmax', attention_grad_layer = 'after_softmax', head_fusion='sum', layer_fusion='sum', 
                  normalize_cam_heads=True, 
-                 score_minmax_norm=True, 
+                 score_normalization_formula="minmax"
                  add_noise=True, 
                  plus=0, 
                  vitcx_score_formula=False, 
@@ -35,7 +35,7 @@ class ScoreAGC:
         self.attn_matrix = []
         self.grad_attn = []
         self.normalize_cam_heads = normalize_cam_heads
-        self.score_minmax_norm = score_minmax_norm
+        self.score_normalization_formula = score_normalization_formula
         self.add_noise = add_noise
         self.plus = plus
         self.vitcx_score_formula = vitcx_score_formula
@@ -195,11 +195,12 @@ class ScoreAGC:
                     # increase in confidence
                     agc_scores = output_mask[:, prediction.item()] - output_truth[0, prediction.item()]
             
-            # if self.score_formula == 'increase_in_confidence':
-            if self.score_minmax_norm:   
+            if self.score_normalization == 'minmax':   
                 agc_scores = (agc_scores - agc_scores.min() ) / (agc_scores.max() - agc_scores.min())
-            else:
+            elif self.score_normalization == 'sigmoid':   
                 agc_scores = torch.sigmoid(agc_scores)
+            elif self.score_normalization == 'softmax':   
+                agc_scores = torch.softmax(agc_scores)
             
             agc_scores += self.plus
 
