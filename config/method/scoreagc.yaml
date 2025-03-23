@@ -1,4 +1,4 @@
 name: scoreagc
 init:
   _target_: scoreagc.ScoreAGC
-  score_normalization_formula: softmax
+  score_normalization_formula: no_normalization

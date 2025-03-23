@@ -212,8 +212,6 @@ class ScoreAGC:
 
             del output_mask  # Delete unnecessary variables that are no longer needed
             torch.cuda.empty_cache()  # Clean up cache if necessary
-            # print("After deleted output from model: ")
-            # print(torch.cuda.memory_allocated()/1024**2)
             
             return agc_scores
 
@@ -272,3 +270,26 @@ class ScoreAGC:
         # print()
 
         return saliency_map
+
+    def get_scores(self, x, class_idx=None):
+        
+        assert x.dim() == 3 or (x.dim() == 4 and x.shape[0] == 1), "Only one image can be processed at a time"
+
+        
+        if x.dim() == 3:
+            x = x.unsqueeze(dim=0)
+
+        with torch.enable_grad():
+            # * Head cam shape: (1, 12, 12, 1, 14, 14) - 12 layers - 12 heads - 1 saliency of shape 14x14 = 196 tokens
+            predicted_class, head_cams, output_truth = self.generate_cams_of_heads(x)
+        if class_idx is None:
+            class_idx = predicted_class
+            
+        scores = self.generate_scores(
+            image=x,
+            head_cams=head_cams,
+            prediction=predicted_class, output_truth=output_truth
+        )
+
+        return scores
+     
