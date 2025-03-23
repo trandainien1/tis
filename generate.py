@@ -222,7 +222,7 @@ def main(cfg: DictConfig):
 
     if cfg.no_target:
         output_npz += ".notarget"
-    print("\nSaving saliency maps to file:", cfg.output_npz)
+    print("\nSaving saliency maps to file:", output_npz)
     create_directory_if_not_exists(output_npz)
     np.savez(output_npz, saliency_maps.cpu().numpy())
 
