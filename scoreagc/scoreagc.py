@@ -196,6 +196,7 @@ class ScoreAGC:
                     agc_scores = output_mask[:, prediction.item()] - output_truth[0, prediction.item()]
             
             if self.score_normalization_formula == 'minmax':   
+                print('min max ne')
                 agc_scores = (agc_scores - agc_scores.min() ) / (agc_scores.max() - agc_scores.min())
             elif self.score_normalization_formula == 'sigmoid':   
                 agc_scores = torch.sigmoid(agc_scores)
