@@ -199,8 +199,11 @@ class ScoreAGC:
                 print('min max ne')
                 agc_scores = (agc_scores - agc_scores.min() ) / (agc_scores.max() - agc_scores.min())
             elif self.score_normalization_formula == 'sigmoid':   
+                print('sigmoid ne')
                 agc_scores = torch.sigmoid(agc_scores)
             elif self.score_normalization_formula == 'softmax':   
+                print('softmax ne')
+                agc_scores = torch.sigmoid(agc_scores)
                 agc_scores = torch.softmax(agc_scores, dim=0)
             
             agc_scores += self.plus
