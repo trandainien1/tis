@@ -10,7 +10,7 @@ import torch.nn.functional as F
 class ScoreAGC:
     def __init__(self, model, attention_matrix_layer = 'before_softmax', attention_grad_layer = 'after_softmax', head_fusion='sum', layer_fusion='sum', 
                  normalize_cam_heads=True, 
-                 score_normalization_formula="minmax"
+                 score_normalization_formula="minmax",
                  add_noise=True, 
                  plus=0, 
                  vitcx_score_formula=False, 
