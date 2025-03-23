@@ -215,16 +215,16 @@ def main(cfg: DictConfig):
     if cfg.method.name == 'scoreagc':
         output_npz = f'npz/{cfg.model.name}_{cfg.method.name}_{method.score_normalization_formula}_heatmap.npz'
     
-    if int(cfg.start_idx) == -1:
-        cfg.output_npz = cfg.output_npz
-    else:
-        cfg.output_npz = f'npz/{cfg.model.name}_{cfg.method.name}_heatmap.npz'
+    # if int(cfg.start_idx) == -1:
+        # cfg.output_npz = cfg.output_npz
+    # else:
+        # cfg.output_npz = f'npz/{cfg.model.name}_{cfg.method.name}_heatmap.npz'
 
     if cfg.no_target:
         output_npz += ".notarget"
     print("\nSaving saliency maps to file:", cfg.output_npz)
     create_directory_if_not_exists(output_npz)
-    np.savez(cfg.output_npz, saliency_maps.cpu().numpy())
+    np.savez(output_npz, saliency_maps.cpu().numpy())
 
 if __name__ == "__main__":
     main()
