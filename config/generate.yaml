@@ -12,4 +12,4 @@ no_target: false
 start_idx: -1
 end_idx: -1
 get_scores: false
-
+score_normalization_function: minmax
