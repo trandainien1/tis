@@ -195,11 +195,11 @@ class ScoreAGC:
                     # increase in confidence
                     agc_scores = output_mask[:, prediction.item()] - output_truth[0, prediction.item()]
             
-            if self.score_normalization == 'minmax':   
+            if self.score_normalization_formula == 'minmax':   
                 agc_scores = (agc_scores - agc_scores.min() ) / (agc_scores.max() - agc_scores.min())
-            elif self.score_normalization == 'sigmoid':   
+            elif self.score_normalization_formula == 'sigmoid':   
                 agc_scores = torch.sigmoid(agc_scores)
-            elif self.score_normalization == 'softmax':   
+            elif self.score_normalization_formula == 'softmax':   
                 agc_scores = torch.softmax(agc_scores)
             
             agc_scores += self.plus
