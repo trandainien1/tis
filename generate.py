@@ -179,7 +179,7 @@ def main(cfg: DictConfig):
     #     method = AGCAM(model)
     # else:
     method = instantiate(cfg.method.init, model)
-    if method.name == 'scoreagc':
+    if cfg.method.name == 'scoreagc':
         print(f'Init ScoreAGC with score normalization: {method.score_normalization_formula}')
 
     # Get dataset
