@@ -219,7 +219,9 @@ class ScoreAGC:
         if self.is_head_fuse:
             mask = (agc_scores.view(1, 12, 1, 1, 1) * head_cams[0]).sum(axis=(0, 1))
         else:
-            mask = (agc_scores.view(12, 12, 1, 1, 1) * head_cams[0]).sum(axis=(0, 1))
+            # mask = (agc_scores.view(12, 12, 1, 1, 1) * head_cams[0]).sum(axis=(0, 1))
+            mask = (agc_scores.view(12, 12, 1, 1, 1) * head_cams[0])
+
 
         if self.handle_pixel_coverage_bias:
             raw_sal = head_cams.squeeze().sum(axis=(0, 1)).unsqueeze(0) # (1, 14, 14)
