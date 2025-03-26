@@ -201,7 +201,7 @@ def main(cfg: DictConfig):
 
         # Compute current saliency ma
         if cfg.get_head_cams_only:
-            head_cams = method._get_head_cams_only(image, class_idx=class_idx).detach().cpu()
+            head_cams = method._get_head_cams_only(image, class_idx=class_idx)[0].detach().cpu()
             print('Result: ', head_cams.shape)
             cur_map = head_cams
         else:
