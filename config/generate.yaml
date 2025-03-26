@@ -12,5 +12,6 @@ no_target: false
 start_idx: -1
 end_idx: -1
 get_scores: false
-# score_normalization_function: minmax
+score_normalization_function: minmax
 get_head_cams_only: False
+get_improved_head_cams: False
