@@ -203,6 +203,7 @@ def main(cfg: DictConfig):
         if cfg.get_head_cams_only:
             head_cams = method._get_head_cams_only(image, class_idx=class_idx)[0].detach().cpu()
             print('Result: ', head_cams.shape)
+            print('matrix', head_cams[0][0][0])
             cur_map = head_cams
         else:
             if cfg.get_scores:
