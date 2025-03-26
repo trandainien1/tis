@@ -292,4 +292,18 @@ class ScoreAGC:
         )
 
         return scores
+    
+    def _get_head_cams_only(self, x, class_idx=None):
+        assert x.dim() == 3 or (x.dim() == 4 and x.shape[0] == 1), "Only one image can be processed at a time"
+        
+        if x.dim() == 3:
+            x = x.unsqueeze(dim=0)
+
+        with torch.enable_grad():
+            # * Head cam shape: (1, 12, 12, 1, 14, 14) - 12 layers - 12 heads - 1 saliency of shape 14x14 = 196 tokens
+            predicted_class, head_cams, output_truth = self.generate_cams_of_heads(x)
+        if class_idx is None:
+            class_idx = predicted_class
+        
+        return head_cams
      

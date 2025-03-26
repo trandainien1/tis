@@ -200,10 +200,15 @@ def main(cfg: DictConfig):
             class_idx = None
 
         # Compute current saliency ma
-        if cfg.get_scores:
-            cur_map = method.get_scores(image, class_idx=class_idx).detach().cpu()
+        if cfg.get_head_cams_only:
+            head_cams = method._get_head_cams_only(image, class_idx=class_idx).detach().cpu()
+            print('Result: ', head_cams.shape)
+            cur_map = head_cams
         else:
-            cur_map = method(image, class_idx=class_idx).detach().cpu()
+            if cfg.get_scores:
+                cur_map = method.get_scores(image, class_idx=class_idx).detach().cpu()
+            else:
+                cur_map = method(image, class_idx=class_idx).detach().cpu()
 
         # Add the current map to the list of saliency maps
         saliency_maps_list.append(cur_map)
@@ -219,7 +224,8 @@ def main(cfg: DictConfig):
         output_npz = f'npz/{cfg.model.name}_{cfg.method.name}_{method.score_normalization_formula}_heatmap.npz'
     if cfg.get_scores:
         output_npz = f'npz/{cfg.model.name}_{cfg.method.name}_{method.score_normalization_formula}_scores.npz'
-
+    if cfg.get_head_cams_only:
+        output_npz = f'npz/{cfg.model.name}_{cfg.method.name}_{method.score_normalization_formula}_head_cams.npz'
 
     # if int(cfg.start_idx) == -1:
         # cfg.output_npz = cfg.output_npz
